@@ -1,5 +1,9 @@
 import { z } from "zod/v4";
-import { HTTPStatusSchema, ErrorSeveritySchema, NonEmptyStringSchema } from "./common.ts";
+import {
+  ErrorSeveritySchema,
+  HTTPStatusSchema,
+  NonEmptyStringSchema,
+} from "./common.ts";
 
 /**
  * API error response schemas

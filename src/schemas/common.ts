@@ -179,7 +179,12 @@ export const HTTPStatusSchema = z.number().int().min(100).max(599);
 /**
  * Error severity levels
  */
-export const ErrorSeveritySchema = z.enum(["info", "warning", "error", "fatal"]);
+export const ErrorSeveritySchema = z.enum([
+  "info",
+  "warning",
+  "error",
+  "fatal",
+]);
 
 /**
  * Utility type extraction
