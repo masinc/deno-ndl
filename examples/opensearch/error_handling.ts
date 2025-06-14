@@ -67,7 +67,9 @@ async function demonstrateErrorHandling() {
     console.log(`✓ 期待されたエラー: ${error.message}`);
 
     if (isValidationError(error)) {
-      console.log("  → パラメータバリデーションエラーとして正しく検出されました");
+      console.log(
+        "  → パラメータバリデーションエラーとして正しく検出されました",
+      );
     }
   } else {
     console.log("✗ エラーが発生するはずでした（最大値超過）");

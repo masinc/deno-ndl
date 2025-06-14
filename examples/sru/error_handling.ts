@@ -120,7 +120,9 @@ if (result4.isErr()) {
   const error = result4.error;
   console.log(`エラータイプ: ${error.type}`);
   console.log(`技術的メッセージ: ${error.message}`);
-  console.log(`ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`);
+  console.log(
+    `ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`,
+  );
 } else {
   console.log("エラーが発生するはずでした（無効なISBN）");
 }
