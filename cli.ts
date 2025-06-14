@@ -1,5 +1,7 @@
 /**
- * CLI entry point for NDL API library
+ * CLI entry point for NDL API library (未実装)
+ *
+ * @module
  */
 
 export function main(): void {

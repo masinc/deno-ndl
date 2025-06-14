@@ -330,10 +330,71 @@ async function executeSearchRetrieve(
 }
 
 /**
- * Execute SRU search retrieve request (raw response)
+ * SRU検索リクエストを実行し、生のレスポンスデータを取得します
  *
- * @param params - SRU search retrieve parameters
- * @returns Promise resolving to parsed SRU response
+ * 国立国会図書館のSRU（Search/Retrieve via URL）APIに対して検索リクエストを送信し、
+ * XMLレスポンスをパースして構造化されたデータとして返します。
+ * 必要に応じて元のXMLデータも含めることができます。
+ *
+ * @param params - SRU検索パラメータ
+ * @param params.query - CQL検索クエリ
+ * @param params.startRecord - 開始レコード位置（1ベース、デフォルト: 1）
+ * @param params.maximumRecords - 最大取得レコード数（デフォルト: 10）
+ * @param params.recordSchema - レコードスキーマ（デフォルト: "dcndl"）
+ * @param includeRawXML - 元のXMLデータを結果に含めるかどうか（デフォルト: false）
+ *
+ * @returns 検索結果。成功時はパースされたSRUレスポンスと任意で元のXML、失敗時はエラー情報
+ *
+ * @example 基本的なCQL検索
+ * ```typescript
+ * import { executeSearchRetrieveRaw } from "@masinc/ndl";
+ *
+ * const result = await executeSearchRetrieveRaw({
+ *   query: 'title="夏目漱石"',
+ *   maximumRecords: 20
+ * });
+ *
+ * if (result.isOk()) {
+ *   const { response } = result.value;
+ *   console.log(`総件数: ${response.numberOfRecords}`);
+ *   console.log(`取得件数: ${response.records.length}`);
+ * }
+ * ```
+ *
+ * @example 高度な検索オプション
+ * ```typescript
+ * const result = await executeSearchRetrieveRaw({
+ *   query: 'creator="芥川龍之介" AND publicationDate >= "1916"',
+ *   startRecord: 11,
+ *   maximumRecords: 50,
+ *   recordSchema: "dcndl"
+ * }, true); // 元のXMLも取得
+ *
+ * if (result.isOk()) {
+ *   console.log("構造化データ:", result.value.response);
+ *   console.log("元のXML:", result.value.rawXML);
+ * }
+ * ```
+ *
+ * @example エラーハンドリング
+ * ```typescript
+ * import { executeSearchRetrieveRaw, isQuerySyntaxError, isRateLimitError } from "@masinc/ndl";
+ *
+ * const result = await executeSearchRetrieveRaw({
+ *   query: 'invalid query syntax'
+ * });
+ *
+ * if (result.isErr()) {
+ *   if (isQuerySyntaxError(result.error)) {
+ *     console.log("CQLクエリに構文エラーがあります");
+ *   } else if (isRateLimitError(result.error)) {
+ *     console.log("リクエスト制限に達しました");
+ *   }
+ * }
+ * ```
+ *
+ * @see {@link https://ndlsearch.ndl.go.jp/help/api/specifications#sru | SRU API仕様}
+ * @see {@link https://www.loc.gov/standards/sru/ | SRU標準仕様}
  */
 export async function executeSearchRetrieveRaw(
   params: SRUSearchRetrieveRequest,
@@ -427,10 +488,68 @@ export async function executeSearchRetrieveRaw(
 }
 
 /**
- * Execute SRU explain request
+ * SRU Explainリクエストを実行し、検索サービスの詳細情報を取得します
  *
- * @param params - SRU explain parameters (optional)
- * @returns Promise resolving to parsed SRU explain response
+ * 国立国会図書館のSRU APIに対してExplainリクエストを送信し、
+ * 利用可能な検索インデックス、サポートされる機能、設定情報などの
+ * サービス詳細情報を取得します。
+ *
+ * @param params - SRU Explainパラメータ（省略可能）
+ * @param params.operation - 操作タイプ（常に "explain"、デフォルト: "explain"）
+ * @param params.version - SRUバージョン（デフォルト: "1.2"）
+ * @param params.stylesheet - 結果表示用スタイルシート（省略可能）
+ *
+ * @returns Explain結果。成功時はサービス情報、失敗時はエラー情報
+ *
+ * @example 基本的なExplain実行
+ * ```typescript
+ * import { explainSRU } from "@masinc/ndl";
+ *
+ * const result = await explainSRU();
+ * if (result.isOk()) {
+ *   const explain = result.value;
+ *   console.log("サービス情報:", explain);
+ *   console.log("利用可能インデックス数:", explain.numberOfRecords);
+ * } else {
+ *   console.error("Explain失敗:", result.error.message);
+ * }
+ * ```
+ *
+ * @example カスタムパラメータでのExplain
+ * ```typescript
+ * const result = await explainSRU({
+ *   operation: "explain",
+ *   version: "1.2",
+ *   stylesheet: "https://example.com/my-stylesheet.xsl"
+ * });
+ *
+ * if (result.isOk()) {
+ *   // サービス詳細情報を処理
+ *   console.log("SRUサービス詳細:", result.value);
+ * }
+ * ```
+ *
+ * @example サービス機能の確認
+ * ```typescript
+ * const result = await explainSRU();
+ * if (result.isOk()) {
+ *   const explainData = result.value;
+ *
+ *   // 利用可能な検索インデックスを確認
+ *   console.log("検索可能フィールド:", explainData.records);
+ *
+ *   // サポートされるレコードスキーマを確認
+ *   console.log("対応レコードスキーマ:", explainData.echoedSearchRetrieveRequest);
+ * }
+ * ```
+ *
+ * @remarks
+ * - Explainリクエストは検索機能の詳細を知るために使用します
+ * - 返される情報はSRU仕様に基づいており、XMLで提供されます
+ * - 通常、アプリケーション初期化時に一度実行し、結果をキャッシュします
+ *
+ * @see {@link https://ndlsearch.ndl.go.jp/help/api/specifications#sru | NDL SRU API仕様}
+ * @see {@link https://www.loc.gov/standards/sru/sru-1-2.html#explain | SRU Explain仕様}
  */
 export async function explainSRU(
   params: SRUExplainRequest = { operation: "explain" },

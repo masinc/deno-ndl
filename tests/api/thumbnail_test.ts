@@ -50,4 +50,3 @@ Deno.test("fetchThumbnail API contract test", () => {
 });
 
 // 実際のAPIテストは統合テストディレクトリで実行
-// saveThumbnailToFileのテストはファイル操作を伴うため、integrationテストで実行

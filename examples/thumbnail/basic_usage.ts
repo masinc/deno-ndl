@@ -4,11 +4,7 @@
  * This example demonstrates how to use the NDL Thumbnail API to fetch book cover images.
  */
 
-import {
-  fetchThumbnail,
-  saveThumbnailToFile,
-  thumbnailExists,
-} from "../../mod.ts";
+import { fetchThumbnail, thumbnailExists } from "../../mod.ts";
 
 console.log("=== NDL Thumbnail API - Basic Usage Example ===\n");
 
@@ -25,15 +21,9 @@ if (smallResult.isOk()) {
   console.log(`💾 ファイルサイズ: ${response.metadata.fileSize} bytes`);
   console.log(`🗄️ 画像形式: ${response.metadata.format}`);
 
-  // ファイルに保存
-  const filename = `${response.id}.jpg`;
-
-  const saveResult = await saveThumbnailToFile(response, `./temp_${filename}`);
-  if (saveResult.isOk()) {
-    console.log(`💾 保存完了: ./temp_${filename}`);
-  } else {
-    console.error(`❌ 保存失敗: ${saveResult.error.message}`);
-  }
+  // 画像データを取得して確認
+  console.log(`🔢 画像データサイズ: ${response.imageData.length} bytes`);
+  console.log(`🌐 画像URL: ${response.imageUrl}`);
 } else {
   console.error(`❌ エラー: ${smallResult.error.message}`);
 }
