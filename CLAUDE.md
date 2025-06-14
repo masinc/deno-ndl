@@ -218,17 +218,15 @@ gh issue develop #{issue番号} --checkout
 ## ビルド・テスト
 
 ```bash
-# テスト実行
-deno task test
-
-# 型チェック
+# 全チェック実行（type check + lint + format check + test）
 deno task check
 
-# リント
-deno task lint
-
-# フォーマット
-deno task fmt
+# 個別実行
+deno check **/*.ts # 型チェック
+deno lint          # リント
+deno fmt --check   # フォーマットチェック
+deno fmt           # フォーマット修正
+deno test          # テスト実行
 ```
 
 ## 参考資料
