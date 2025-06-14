@@ -123,8 +123,9 @@ export function objectWithPartial<
   const newShape: z.ZodRawShape = { ...shape };
   
   for (const key of partialKeys) {
-    if (shape[key] && typeof (shape[key] as any).optional === 'function') {
-      newShape[key] = (shape[key] as any).optional();
+    const field = shape[key] as z.ZodTypeAny;
+    if (field && typeof field.optional === 'function') {
+      newShape[key] = field.optional();
     }
   }
   
@@ -147,7 +148,7 @@ export function parseXMLAttribute<T>(
   }
   
   // Try to parse as different types based on schema type
-  const schemaType = (schema as any)._def?.typeName;
+  const schemaType = (schema as z.ZodTypeAny)._def?.typeName;
   
   if (schemaType === "ZodNumber") {
     const num = Number(value);
