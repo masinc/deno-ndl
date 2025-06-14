@@ -16,7 +16,8 @@ export const SRUOperationSchema = z.enum([
 /**
  * SRU version schema
  */
-export const SRUVersionSchema = z.enum(["1.1", "1.2"]).default("1.2");
+export const SRUVersionSchema: z.ZodType<"1.1" | "1.2"> = z.enum(["1.1", "1.2"])
+  .default("1.2");
 
 /**
  * CQL query schema
@@ -28,7 +29,15 @@ export const CQLQuerySchema = z.string().min(1, "CQL query cannot be empty");
  * SRU record schema identifiers
  * Common schemas supported by NDL
  */
-export const SRURecordSchemaSchema = z.enum([
+export const SRURecordSchemaSchema: z.ZodType<
+  | "info:srw/schema/1/dc-v1.1"
+  | "info:srw/schema/1/mods-v3.0"
+  | "http://www.loc.gov/mods/v3"
+  | "info:srw/schema/1/marcxml-v1.1"
+  | "http://www.loc.gov/MARC21/slim"
+  | "dcndl"
+  | "dcterms"
+> = z.enum([
   "info:srw/schema/1/dc-v1.1",
   "info:srw/schema/1/mods-v3.0",
   "http://www.loc.gov/mods/v3",
