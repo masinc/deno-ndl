@@ -1,6 +1,6 @@
 {
   "name": "@masinc/ndl",
-  "version": "0.0.202506150355",
+  "version": "0.1.202506150741",
   "exports": {
     ".": "./mod.ts",
     "./cli": "./cli.ts"

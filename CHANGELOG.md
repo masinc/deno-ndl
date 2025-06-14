@@ -12,6 +12,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **MINOR番号**: 新機能追加時に手動でインクリメント
 - **MAJOR番号**: 現在のプロジェクトフェーズでは使用しない
 
+## [0.1.202506150741] - 2025-06-15
+
+### Added
+
+- Thumbnail API実装 - NDL書影画像取得機能
+- サムネイル存在確認API (`thumbnailExists`)
+- 画像ファイル保存機能 (`saveThumbnailToFile`)
+- Thumbnail API用の包括的なテストスイート
+- 実用的な使用例（基本取得・Web表示）
+
+### Technical
+
+- 簡潔なAPIデザイン（IDパラメータのみ）
+- 実際のNDL API仕様に準拠した実装
+- バイナリデータハンドリング対応
+- AbortControllerによるタイムアウト制御
+
 ## [0.0.202506150355] - 2025-06-15
 
 ### Added
