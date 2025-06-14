@@ -1,14 +1,14 @@
 /**
  * NDL library error types
  */
-export type NDLErrorType = 
+export type NDLErrorType =
   | "network"
-  | "api" 
+  | "api"
   | "validation";
 
 /**
  * NDL library error interface
- * 
+ *
  * @template T - Type of the cause
  */
 export interface NDLError<T = unknown> {
@@ -19,7 +19,7 @@ export interface NDLError<T = unknown> {
 
 /**
  * Create a network error
- * 
+ *
  * @param message - Error message
  * @param cause - Original error cause
  * @returns Network error
@@ -37,7 +37,7 @@ export function networkError<T = unknown>(
 
 /**
  * Create an API error
- * 
+ *
  * @param message - Error message
  * @param cause - Original error cause (e.g., Response object, status code)
  * @returns API error
@@ -55,7 +55,7 @@ export function apiError<T = unknown>(
 
 /**
  * Create a validation error
- * 
+ *
  * @param message - Error message
  * @param cause - Validation errors (e.g., Zod issues)
  * @returns Validation error
@@ -73,7 +73,7 @@ export function validationError<T = unknown>(
 
 /**
  * Type guard to check error type
- * 
+ *
  * @param error - Error to check
  * @param type - Expected error type
  * @returns Type predicate
