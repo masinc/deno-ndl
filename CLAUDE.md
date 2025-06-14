@@ -27,7 +27,7 @@ v4による厳密な型定義とテストファースト開発を採用。
 
 ```typescript
 // Zod v4 (必須) - v3のimportは禁止
-import { z } from "zod/v4";  // ✅ 正しい
+import { z } from "zod/v4"; // ✅ 正しい
 // import { z } from "zod";  // ❌ v3なので禁止
 
 // XML Parser
