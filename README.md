@@ -18,12 +18,12 @@
 
 - **SRU (Search/Retrieve via URL)** - 書誌検索API
 - **OpenSearch** - OpenSearch形式検索API
+- **Thumbnail** - 書影画像取得API
 
 ### 🚧 今後実装予定
 
 - **OpenURL** - 書誌情報解決API
 - **OAI-PMH** - メタデータハーベスティングAPI
-- **Thumbnail** - 書影画像取得API
 
 ## インストール
 
@@ -38,7 +38,7 @@ deno add jsr:@masinc/ndl
 ```json
 {
   "imports": {
-    "@masinc/ndl": "jsr:@masinc/ndl@^0.0.202506150355"
+    "@masinc/ndl": "jsr:@masinc/ndl@^0.1.202506150741"
   }
 }
 ```
@@ -77,6 +77,25 @@ if (result.isOk()) {
   });
 } else {
   console.error("検索失敗:", result.error.message);
+}
+```
+
+### Thumbnail API
+
+```typescript
+import { fetchThumbnail, saveThumbnailToFile } from "@masinc/ndl";
+
+// サムネイル取得
+const result = await fetchThumbnail({ id: "9784422311074" });
+
+if (result.isOk()) {
+  const thumbnail = result.value;
+  console.log(`取得: ${thumbnail.id}, サイズ: ${thumbnail.metadata.size}`);
+  
+  // ファイルに保存
+  await saveThumbnailToFile(thumbnail, "thumbnail.jpg");
+} else {
+  console.error("取得失敗:", result.error.message);
 }
 ```
 
