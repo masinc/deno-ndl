@@ -46,18 +46,22 @@ import { assert, assertEquals } from "@std/assert";
 ### ✅ 実装済み
 
 #### 1. 検索API
+
 - **SRU** (Search/Retrieve via URL) - 完全実装
 - **OpenSearch** - 完全実装
 
 ### 🚧 今後実装予定
 
 #### 1. 検索API
+
 - **OpenURL** - 未実装
 
 #### 2. ハーベストAPI
+
 - **OAI-PMH** (メタデータハーベスティング) - 未実装
 
 #### 3. サムネイルAPI
+
 - 書影画像の取得 - 未実装
 
 ## ディレクトリ構成
@@ -106,8 +110,10 @@ deno-ndl/
 
 1. **命名規則**
    - API関数: `${動詞}${対象}` (例: `searchSRU`, `searchOpenSearch`)
-   - スキーマ: `${名前}Schema` (例: `SRUResponseSchema`, `OpenSearchResponseSchema`)
-   - 型定義: プレフィックス付き統一命名 (例: `SRUSearchItem`, `OpenSearchItem`, `SRUSearchResponse`, `OpenSearchSearchResponse`)
+   - スキーマ: `${名前}Schema` (例: `SRUResponseSchema`,
+     `OpenSearchResponseSchema`)
+   - 型定義: プレフィックス付き統一命名 (例: `SRUSearchItem`, `OpenSearchItem`,
+     `SRUSearchResponse`, `OpenSearchSearchResponse`)
    - ユーティリティ: `${動詞}${名前}` (例: `parseXML`, `formatDate`)
 
 2. **関数設計**
@@ -247,6 +253,18 @@ deno task test:integration                   # 統合テスト実行（要ネッ
 
 - **ユニットテスト**: `deno task test` - ネットワーク不要、モックデータ使用
 - **統合テスト**: `deno task test:integration` - 実際のNDL APIとの通信テスト
+
+## リリース手順
+
+新バージョンのリリースの詳細については、@docs/release.md を参照してください。
+
+### リリースフロー概要
+
+1. テスト実行 (`deno task check`)
+2. バージョン更新 (deno.jsonc + CHANGELOG.md)
+3. リリースコミット・タグ作成
+4. GitHub Actions による JSR 自動公開
+5. GitHub Release 作成
 
 ## 参考資料
 
