@@ -20,6 +20,7 @@ import type {
 import {
   AdvancedSearchParamsSchema,
   CQLBuilderOptionsSchema,
+  DateRangeSchema,
   QueryValidationResultSchema,
   SimpleSearchParamsSchema,
 } from "../schemas/sru/query-builder.ts";
@@ -134,8 +135,8 @@ export class CQLQueryBuilder {
    */
   dateRange(range: DateRange): this {
     const validationResult = safeParse(
-      SimpleSearchParamsSchema.pick({ dateRange: true }),
-      { dateRange: range },
+      DateRangeSchema,
+      range,
     );
 
     if (validationResult.isErr()) {

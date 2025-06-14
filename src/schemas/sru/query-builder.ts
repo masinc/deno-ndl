@@ -72,7 +72,9 @@ export const NDLSearchFieldSchema = z.enum([
 /**
  * Language codes supported by NDL
  */
-export const NDLLanguageCodeSchema = z.enum([
+export const NDLLanguageCodeSchema: z.ZodType<
+  "jpn" | "eng" | "chi" | "kor" | "fre" | "ger" | "rus" | "spa" | "ita" | "por"
+> = z.enum([
   "jpn", // 日本語
   "eng", // 英語
   "chi", // 中国語
@@ -88,7 +90,20 @@ export const NDLLanguageCodeSchema = z.enum([
 /**
  * Material types in NDL
  */
-export const NDLMaterialTypeSchema = z.enum([
+export const NDLMaterialTypeSchema: z.ZodType<
+  | "Book"
+  | "Article"
+  | "Journal"
+  | "Newspaper"
+  | "Thesis"
+  | "Map"
+  | "Music"
+  | "Video"
+  | "Sound"
+  | "Software"
+  | "Website"
+  | "Database"
+> = z.enum([
   "Book", // 図書
   "Article", // 記事・論文
   "Journal", // 雑誌
@@ -106,7 +121,10 @@ export const NDLMaterialTypeSchema = z.enum([
 /**
  * Date range schema
  */
-export const DateRangeSchema = z.object({
+export const DateRangeSchema: z.ZodType<{
+  from?: string;
+  to?: string;
+}> = z.object({
   /**
    * Start date (YYYY or YYYY-MM-DD format)
    */
@@ -157,7 +175,95 @@ export const SearchFieldSchema = z.object({
  * Simple search parameters schema
  * For common search scenarios with intuitive field names
  */
-export const SimpleSearchParamsSchema = z.object({
+export const SimpleSearchParamsSchema: z.ZodType<{
+  title?: string;
+  creator?: string;
+  subject?: string;
+  publisher?: string;
+  isbn?: string;
+  issn?: string;
+  jpno?: string;
+  language?:
+    | "jpn"
+    | "eng"
+    | "chi"
+    | "kor"
+    | "fre"
+    | "ger"
+    | "rus"
+    | "spa"
+    | "ita"
+    | "por"
+    | (
+      | "jpn"
+      | "eng"
+      | "chi"
+      | "kor"
+      | "fre"
+      | "ger"
+      | "rus"
+      | "spa"
+      | "ita"
+      | "por"
+    )[];
+  dateRange?: { from?: string; to?: string };
+  type?:
+    | "Book"
+    | "Article"
+    | "Journal"
+    | "Newspaper"
+    | "Thesis"
+    | "Map"
+    | "Music"
+    | "Video"
+    | "Sound"
+    | "Software"
+    | "Website"
+    | "Database";
+  anywhere?: string;
+  description?: string;
+  exclude?: {
+    title?: string;
+    creator?: string;
+    subject?: string;
+    language?:
+      | "jpn"
+      | "eng"
+      | "chi"
+      | "kor"
+      | "fre"
+      | "ger"
+      | "rus"
+      | "spa"
+      | "ita"
+      | "por"
+      | (
+        | "jpn"
+        | "eng"
+        | "chi"
+        | "kor"
+        | "fre"
+        | "ger"
+        | "rus"
+        | "spa"
+        | "ita"
+        | "por"
+      )[];
+    type?:
+      | "Book"
+      | "Article"
+      | "Journal"
+      | "Newspaper"
+      | "Thesis"
+      | "Map"
+      | "Music"
+      | "Video"
+      | "Sound"
+      | "Software"
+      | "Website"
+      | "Database";
+  };
+}> = z.object({
   /**
    * Title search
    */

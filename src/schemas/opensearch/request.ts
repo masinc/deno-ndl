@@ -8,7 +8,10 @@ import { MaximumRecordsSchema } from "../common.ts";
 /**
  * OpenSearch query parameter schema
  */
-export const OpenSearchQuerySchema = z.string().min(1, "Query cannot be empty");
+export const OpenSearchQuerySchema: z.ZodString = z.string().min(
+  1,
+  "Query cannot be empty",
+);
 
 /**
  * OpenSearch count parameter (equivalent to maximumRecords)
@@ -18,7 +21,13 @@ export const OpenSearchCountSchema = MaximumRecordsSchema;
 /**
  * OpenSearch API request parameters schema
  */
-export const OpenSearchRequestSchema = z.object({
+export const OpenSearchRequestSchema: z.ZodType<{
+  q: string;
+  count?: number;
+  start?: number;
+  format?: "rss" | "atom";
+  hl?: "ja" | "en";
+}> = z.object({
   /**
    * Search query string
    */
