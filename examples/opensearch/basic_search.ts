@@ -1,6 +1,6 @@
 /**
  * 基本的な検索の例
- * 
+ *
  * 実行方法:
  * deno run --allow-net examples/opensearch/basic_search.ts
  */

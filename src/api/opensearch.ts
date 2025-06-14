@@ -278,10 +278,10 @@ export interface SearchResponse {
 
 /**
  * Search NDL using OpenSearch API
- * 
+ *
  * @param params - OpenSearch search parameters
  * @returns Promise<Result<SearchResponse, NDLError>> - Structured search response
- * 
+ *
  * @example
  * ```typescript
  * const result = await searchOpenSearch({
@@ -289,12 +289,12 @@ export interface SearchResponse {
  *   count: 20,
  *   start: 0,
  * });
- * 
+ *
  * if (result.isOk()) {
  *   const { items, pagination } = result.value;
  *   console.log(`Found ${pagination.totalResults} results`);
  *   console.log(`Page ${pagination.currentPage} of ${pagination.totalPages}`);
- *   
+ *
  *   items.forEach(item => {
  *     console.log(`- ${item.title} by ${item.authors?.join(", ")}`);
  *   });
@@ -306,79 +306,88 @@ export async function searchOpenSearch(
 ): Promise<Result<SearchResponse, NDLError>> {
   // 低レベルAPIを呼び出し
   const result = await searchOpenSearchRaw(params);
-  
+
   if (result.isErr()) {
     return err(result.error);
   }
 
   const response = result.value;
-  
+
   // 基本的な結果抽出
   const basicResults = extractSearchResults(response);
   const paginationInfo = extractPaginationInfo(response);
-  
+
   // より詳細な情報を抽出
   const items: SearchItem[] = [];
-  
+
   if ("rss" in response) {
     const rssItems = response.rss.channel.item || [];
     rssItems.forEach((item, index) => {
       const basicItem = basicResults[index];
       if (!basicItem) return;
-      
+
       const searchItem: SearchItem = {
         title: basicItem.title,
         link: basicItem.link,
         description: basicItem.description,
         publishedDate: basicItem.pubDate,
-        materialType: Array.isArray(item.category) ? item.category : item.category ? [item.category] : undefined,
+        materialType: Array.isArray(item.category)
+          ? item.category
+          : item.category
+          ? [item.category]
+          : undefined,
       };
-      
+
       // Dublin Core要素から追加情報を抽出
       if (item["dc:creator"]) {
-        searchItem.authors = Array.isArray(item["dc:creator"]) 
-          ? item["dc:creator"] 
+        searchItem.authors = Array.isArray(item["dc:creator"])
+          ? item["dc:creator"]
           : [item["dc:creator"]];
       }
-      
+
       if (item["dc:publisher"]) {
         searchItem.publisher = Array.isArray(item["dc:publisher"])
           ? item["dc:publisher"][0]
           : item["dc:publisher"];
       }
-      
+
       // ISBNを探す
       if (item["dc:identifier"]) {
-        const identifiers = Array.isArray(item["dc:identifier"]) 
-          ? item["dc:identifier"] 
+        const identifiers = Array.isArray(item["dc:identifier"])
+          ? item["dc:identifier"]
           : [item["dc:identifier"]];
-          
+
         for (const id of identifiers) {
           if (typeof id === "object" && id["@xsi:type"] === "dcndl:ISBN") {
             searchItem.isbn = String(id["#text"]);
             break;
-          } else if (typeof id === "object" && id["@xsi:type"] === "dcndl:NDLBibID") {
+          } else if (
+            typeof id === "object" && id["@xsi:type"] === "dcndl:NDLBibID"
+          ) {
             searchItem.ndlBibId = String(id["#text"]);
           }
         }
       }
-      
+
       items.push(searchItem);
     });
   } else if ("feed" in response) {
     // Atom形式の場合の処理（基本情報のみ）
-    items.push(...basicResults.map(item => ({
+    items.push(...basicResults.map((item) => ({
       title: item.title,
       link: item.link,
       description: item.description,
       publishedDate: item.pubDate,
     })));
   }
-  
+
   // ページネーション計算
-  const currentPage = Math.floor(paginationInfo.startIndex / paginationInfo.itemsPerPage) + 1;
-  const totalPages = Math.ceil(paginationInfo.totalResults / paginationInfo.itemsPerPage);
-  
+  const currentPage =
+    Math.floor(paginationInfo.startIndex / paginationInfo.itemsPerPage) + 1;
+  const totalPages = Math.ceil(
+    paginationInfo.totalResults / paginationInfo.itemsPerPage,
+  );
+
   return ok({
     items,
     pagination: {

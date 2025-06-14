@@ -260,7 +260,7 @@ Deno.test("extractSearchResults handles complex RSS items with DC elements", () 
   };
 
   const results = extractSearchResults(complexRssResponse);
-  
+
   assertEquals(results.length, 1);
   assertEquals(results[0].title, "複雑な書誌データのテスト");
   assertEquals(results[0].link, "https://example.com/complex");
@@ -308,7 +308,7 @@ Deno.test("extractSearchResults handles single DC elements", () => {
   };
 
   const results = extractSearchResults(singleDcRssResponse);
-  
+
   assertEquals(results.length, 1);
   assertEquals(results[0].title, "単一DC要素テスト");
   assertEquals(results[0].link, "https://example.com/single");

@@ -49,7 +49,8 @@ export const StartRecordSchema = z.number().int().positive().default(1);
 /**
  * Maximum records parameter
  */
-export const MaximumRecordsSchema = z.number().int().positive().max(500).default(10);
+export const MaximumRecordsSchema = z.number().int().positive().max(500)
+  .default(10);
 
 /**
  * Total records count

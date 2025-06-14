@@ -43,7 +43,6 @@ Deno.test("ISO8601DateSchema validates datetime strings", () => {
   assertThrows(() => ISO8601DateSchema.parse("invalid-date"));
 });
 
-
 Deno.test("StartRecordSchema has default value", () => {
   assertEquals(StartRecordSchema.parse(undefined), 1);
   assertEquals(StartRecordSchema.parse(5), 5);

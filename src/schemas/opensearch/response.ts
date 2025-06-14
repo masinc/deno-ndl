@@ -137,7 +137,11 @@ export const RSSItemSchema = z.object({
       "@rdf:resource": URLSchema,
     })),
   ]).optional(),
-  "dc:description": z.union([z.string(), z.number(), z.array(z.union([z.string(), z.number()]))]).optional(),
+  "dc:description": z.union([
+    z.string(),
+    z.number(),
+    z.array(z.union([z.string(), z.number()])),
+  ]).optional(),
 }).passthrough(); // 他の未知のプロパティも許可
 
 /**

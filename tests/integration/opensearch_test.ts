@@ -126,28 +126,38 @@ Deno.test("parseOpenSearchResponse validates all fixture responses", async () =>
 
   for (const fixture of fixtures) {
     const result = await parseOpenSearchResponse(fixture.data);
-    
+
     if (result.isErr()) {
       console.error(`Parse failed for ${fixture.name}:`, result.error);
-      throw new Error(`Parse failed for ${fixture.name}: ${result.error.message}`);
+      throw new Error(
+        `Parse failed for ${fixture.name}: ${result.error.message}`,
+      );
     }
 
     // すべてのfixtureが正常にパースされることを確認
-    assertEquals(result.isOk(), true, `${fixture.name} should parse successfully`);
-    
+    assertEquals(
+      result.isOk(),
+      true,
+      `${fixture.name} should parse successfully`,
+    );
+
     const response = result.value;
-    
+
     // RSSまたはAtomのレスポンスであることを確認
     const isRss = "rss" in response;
     const isAtom = "feed" in response;
-    assertEquals(isRss || isAtom, true, `${fixture.name} should be RSS or Atom format`);
+    assertEquals(
+      isRss || isAtom,
+      true,
+      `${fixture.name} should be RSS or Atom format`,
+    );
   }
 });
 
 Deno.test("searchOpenSearch high-level API returns structured data", async () => {
   // fixtureデータをパースして高レベルAPIの動作をテスト
   const parsedResponse = await parseOpenSearchResponse(OPENSEARCH.BASIC_SEARCH);
-  
+
   if (parsedResponse.isErr()) {
     throw new Error(`Failed to parse fixture: ${parsedResponse.error.message}`);
   }
@@ -155,21 +165,23 @@ Deno.test("searchOpenSearch high-level API returns structured data", async () =>
   // 高レベルAPIの結果構造をテスト（実際のAPIは呼ばない）
   // searchOpenSearchの内部ロジックをテストするため、
   // extractSearchResultsとextractPaginationInfoを使用
-  const { extractSearchResults, extractPaginationInfo } = await import("../../src/api/opensearch.ts");
-  
+  const { extractSearchResults, extractPaginationInfo } = await import(
+    "../../src/api/opensearch.ts"
+  );
+
   const basicResults = extractSearchResults(parsedResponse.value);
   const paginationInfo = extractPaginationInfo(parsedResponse.value);
-  
+
   // 基本的な構造確認
   assertEquals(Array.isArray(basicResults), true);
   assertGreater(basicResults.length, 0);
-  
+
   // 最初のアイテムの構造確認
   const firstItem = basicResults[0];
   assertEquals(typeof firstItem.title, "string");
   assertEquals(typeof firstItem.link, "string");
   assertEquals(firstItem.link.startsWith("https://"), true);
-  
+
   // ページネーション情報の確認
   assertEquals(typeof paginationInfo.totalResults, "number");
   assertEquals(typeof paginationInfo.startIndex, "number");

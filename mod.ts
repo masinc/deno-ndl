@@ -1,20 +1,18 @@
 /**
  * NDL (National Diet Library) API client for Deno
- * 
+ *
  * @module
  */
 
 // OpenSearch API
 export {
-  searchOpenSearch,
   type SearchItem,
+  searchOpenSearch,
   type SearchResponse,
 } from "./src/api/opensearch.ts";
 
 // OpenSearch request types
-export type {
-  OpenSearchRequest,
-} from "./src/schemas/opensearch/mod.ts";
+export type { OpenSearchRequest } from "./src/schemas/opensearch/mod.ts";
 
 // Error types
 export type { NDLError } from "./src/errors.ts";
