@@ -73,7 +73,6 @@ Deno.test("arrayOf creates constrained array schema", () => {
   }
 });
 
-
 Deno.test("parseXMLAttribute handles string attributes", () => {
   const schema = z.string();
   const result = parseXMLAttribute(schema, "hello");
