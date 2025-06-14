@@ -12,8 +12,7 @@ async function searchWithPagination(query: string, pageSize: number = 10) {
   console.log("=".repeat(50));
 
   // 最初のページを取得
-  const firstResult = await searchOpenSearch({
-    q: query,
+  const firstResult = await searchOpenSearch(query, {
     count: pageSize,
     start: 0,
   });
@@ -34,8 +33,7 @@ async function searchWithPagination(query: string, pageSize: number = 10) {
   for (let page = 1; page <= maxPages; page++) {
     const start = (page - 1) * pageSize;
 
-    const result = await searchOpenSearch({
-      q: query,
+    const result = await searchOpenSearch(query, {
       count: pageSize,
       start,
     });

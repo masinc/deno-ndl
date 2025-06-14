@@ -20,8 +20,7 @@ async function demonstrateErrorHandling() {
   console.log("\n1. 正常な検索");
   console.log("-".repeat(20));
 
-  const validResult = await searchOpenSearch({
-    q: "夏目漱石",
+  const validResult = await searchOpenSearch("夏目漱石", {
     count: 2,
   });
 
@@ -35,8 +34,7 @@ async function demonstrateErrorHandling() {
   console.log("\n2. 無効なパラメータでのエラー");
   console.log("-".repeat(20));
 
-  const invalidResult = await searchOpenSearch({
-    q: "", // 空文字列は無効
+  const invalidResult = await searchOpenSearch("", { // 空文字列は無効
     count: 5,
   });
 
@@ -55,11 +53,13 @@ async function demonstrateErrorHandling() {
   console.log("\n3. 連続リクエストでのエラーハンドリング");
   console.log("-".repeat(20));
 
-  const requests = Array.from({ length: 3 }, (_, i) =>
-    searchOpenSearch({
-      q: `test${i}`,
-      count: 1,
-    }));
+  const requests = Array.from(
+    { length: 3 },
+    (_, i) =>
+      searchOpenSearch(`test${i}`, {
+        count: 1,
+      }),
+  );
 
   const results = await Promise.all(requests);
 

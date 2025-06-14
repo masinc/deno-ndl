@@ -34,10 +34,10 @@ export const RSSChannelSchema = z.object({
   lastBuildDate: ISO8601DateSchema.optional(),
   generator: NonEmptyStringSchema.optional(),
 
-  // OpenSearch specific elements (実際のAPIでは名前空間プレフィックス付き)
-  "openSearch:totalResults": z.number().int().min(0),
-  "openSearch:startIndex": z.number().int().min(0),
-  "openSearch:itemsPerPage": z.number().int().min(0),
+  // OpenSearch specific elements (実際のAPIでは名前空間プレフィックス付き、文字列で返される)
+  "openSearch:totalResults": z.string().transform((val) => parseInt(val, 10)),
+  "openSearch:startIndex": z.string().transform((val) => parseInt(val, 10)),
+  "openSearch:itemsPerPage": z.string().transform((val) => parseInt(val, 10)),
   "openSearch:Query": z.object({
     "@role": z.string(),
     "@searchTerms": NonEmptyStringSchema,
@@ -51,7 +51,7 @@ export const RSSChannelSchema = z.object({
 export const RSSItemSchema = z.object({
   title: NonEmptyStringSchema,
   link: URLSchema,
-  description: NonEmptyStringSchema.optional(),
+  description: z.string().optional(), // CDATAやHTML内容を許可
   author: z.string().optional(), // 空文字列も許可される
   category: z.union([
     NonEmptyStringSchema,
@@ -66,7 +66,7 @@ export const RSSItemSchema = z.object({
   guid: z.union([
     NonEmptyStringSchema,
     z.object({
-      "@isPermaLink": z.boolean().optional(),
+      "@isPermaLink": z.union([z.boolean(), z.string()]).optional(), // 実際は"true"/"false"文字列
       "#text": NonEmptyStringSchema,
     }),
   ]).optional(),
@@ -151,10 +151,18 @@ export const RSSFeedSchema = z.object({
   rss: z.object({
     "@version": z.union([z.string(), z.number()]), // 実際のAPIでは数値2として返される
     "@xmlns:opensearch": z.string().optional(),
+    "@xmlns:dc": z.string().optional(),
+    "@xmlns:openSearch": z.string().optional(),
+    "@xmlns:dcndl": z.string().optional(),
+    "@xmlns:dcmitype": z.string().optional(),
+    "@xmlns:dcterms": z.string().optional(),
+    "@xmlns:xsi": z.string().optional(),
+    "@xmlns:rdfs": z.string().optional(),
+    "@xmlns:rdf": z.string().optional(),
     channel: RSSChannelSchema.extend({
       item: z.array(RSSItemSchema).optional(),
     }),
-  }),
+  }).passthrough(), // 他の名前空間属性も許可
 });
 
 /**
@@ -265,10 +273,10 @@ export const AtomFeedSchema = z.object({
       }),
     ]).optional(),
 
-    // OpenSearch specific elements (実際のAPIでは名前空間プレフィックス付き)
-    "openSearch:totalResults": z.number().int().min(0),
-    "openSearch:startIndex": z.number().int().min(0),
-    "openSearch:itemsPerPage": z.number().int().min(0),
+    // OpenSearch specific elements (実際のAPIでは名前空間プレフィックス付き、文字列で返される)
+    "openSearch:totalResults": z.string().transform((val) => parseInt(val, 10)),
+    "openSearch:startIndex": z.string().transform((val) => parseInt(val, 10)),
+    "openSearch:itemsPerPage": z.string().transform((val) => parseInt(val, 10)),
     "openSearch:Query": z.object({
       "@role": z.string(),
       "@searchTerms": NonEmptyStringSchema,

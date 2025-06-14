@@ -7,8 +7,7 @@
 
 import { searchOpenSearch } from "../../mod.ts";
 
-const result = await searchOpenSearch({
-  q: "夏目漱石",
+const result = await searchOpenSearch("夏目漱石", {
   count: 5,
 });
 
