@@ -6,8 +6,10 @@
     "./cli": "./cli.ts"
   },
   "tasks": {
-    "dev": "deno test --watch",
-    "check": "deno check **/*.ts && deno lint && deno fmt --check && deno test"
+    "dev": "deno test --watch --ignore=\"tests/integration/\"",
+    "test": "deno test --ignore=\"tests/integration/\"",
+    "check": "deno check **/*.ts && deno lint && deno fmt --check && deno task test",
+    "test:integration": "deno test --allow-net --allow-read tests/integration/"
   },
   "license": "MIT",
   "imports": {
