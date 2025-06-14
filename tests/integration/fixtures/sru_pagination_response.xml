@@ -1,0 +1,256 @@
+<searchRetrieveResponse xmlns="http://www.loc.gov/zing/srw/">
+  <version>1.2</version>
+  <numberOfRecords>5663</numberOfRecords>
+  <nextRecordPosition>11</nextRecordPosition>
+  <extraResponseData>
+    &lt;facets&gt;
+      &lt;lst name="REPOSITORY_NO"&gt;
+        &lt;int name="R100000001"&gt;2200&lt;/int&gt;
+        &lt;int name="R100000002"&gt;1538&lt;/int&gt;
+        &lt;int name="R100000136"&gt;831&lt;/int&gt;
+        &lt;int name="R000000014"&gt;278&lt;/int&gt;
+        &lt;int name="R100000134"&gt;229&lt;/int&gt;
+        &lt;int name="R100000038"&gt;227&lt;/int&gt;
+        &lt;int name="R100000128"&gt;164&lt;/int&gt;
+        &lt;int name="R000000004"&gt;54&lt;/int&gt;
+        &lt;int name="R100000049"&gt;29&lt;/int&gt;
+        &lt;int name="R100000132"&gt;20&lt;/int&gt;
+        &lt;int name="R100000147"&gt;16&lt;/int&gt;
+        &lt;int name="R100000129"&gt;14&lt;/int&gt;
+        &lt;int name="R100000039"&gt;13&lt;/int&gt;
+        &lt;int name="R100000094"&gt;13&lt;/int&gt;
+        &lt;int name="R100000098"&gt;10&lt;/int&gt;
+        &lt;int name="R000000016"&gt;4&lt;/int&gt;
+        &lt;int name="R000000190"&gt;4&lt;/int&gt;
+        &lt;int name="R100000140"&gt;4&lt;/int&gt;
+        &lt;int name="R000000025"&gt;3&lt;/int&gt;
+        &lt;int name="R100000126"&gt;3&lt;/int&gt;
+        &lt;int name="R100000073"&gt;2&lt;/int&gt;
+        &lt;int name="R100000137"&gt;2&lt;/int&gt;
+        &lt;int name="R000000050"&gt;1&lt;/int&gt;
+        &lt;int name="R000000054"&gt;1&lt;/int&gt;
+        &lt;int name="R100000074"&gt;1&lt;/int&gt;
+        &lt;int name="R100000111"&gt;1&lt;/int&gt;
+        &lt;int name="R100000127"&gt;1&lt;/int&gt;
+      &lt;/lst&gt;
+      &lt;lst name="NDC"&gt;
+        &lt;int name="+"&gt;7&lt;/int&gt;
+        &lt;int name="0"&gt;10&lt;/int&gt;
+        &lt;int name="1"&gt;10&lt;/int&gt;
+        &lt;int name="2"&gt;8&lt;/int&gt;
+        &lt;int name="3"&gt;24&lt;/int&gt;
+        &lt;int name="4"&gt;4&lt;/int&gt;
+        &lt;int name="5"&gt;3&lt;/int&gt;
+        &lt;int name="6"&gt;6&lt;/int&gt;
+        &lt;int name="7"&gt;343&lt;/int&gt;
+        &lt;int name="8"&gt;36&lt;/int&gt;
+        &lt;int name="9"&gt;2582&lt;/int&gt;
+        &lt;int name="A"&gt;1&lt;/int&gt;
+        &lt;int name="C"&gt;28&lt;/int&gt;
+        &lt;int name="E"&gt;51&lt;/int&gt;
+        &lt;int name="F"&gt;1&lt;/int&gt;
+        &lt;int name="J"&gt;8&lt;/int&gt;
+        &lt;int name="K"&gt;154&lt;/int&gt;
+        &lt;int name="M"&gt;16&lt;/int&gt;
+        &lt;int name="P"&gt;29&lt;/int&gt;
+        &lt;int name="S"&gt;2&lt;/int&gt;
+        &lt;int name="T"&gt;1&lt;/int&gt;
+        &lt;int name="Y"&gt;1&lt;/int&gt;
+        &lt;int name="エ"&gt;1&lt;/int&gt;
+        &lt;int name="文"&gt;2&lt;/int&gt;
+        &lt;int name="０"&gt;8&lt;/int&gt;
+        &lt;int name="６"&gt;1&lt;/int&gt;
+        &lt;int name="７"&gt;8&lt;/int&gt;
+        &lt;int name="８"&gt;2&lt;/int&gt;
+        &lt;int name="９"&gt;153&lt;/int&gt;
+        &lt;int name="Ｃ"&gt;1&lt;/int&gt;
+        &lt;int name="Ｅ"&gt;4&lt;/int&gt;
+        &lt;int name="Ｊ"&gt;7&lt;/int&gt;
+        &lt;int name="Ｋ"&gt;1&lt;/int&gt;
+        &lt;int name="Ｚ"&gt;1&lt;/int&gt;
+        &lt;int name="ｴ"&gt;1&lt;/int&gt;
+      &lt;/lst&gt;
+      &lt;lst name="ISSUED_DATE"&gt;
+        &lt;int name="1900"&gt;12&lt;/int&gt;
+        &lt;int name="1918"&gt;1&lt;/int&gt;
+        &lt;int name="1924"&gt;12&lt;/int&gt;
+        &lt;int name="1930"&gt;3&lt;/int&gt;
+        &lt;int name="1933"&gt;2&lt;/int&gt;
+        &lt;int name="1934"&gt;5&lt;/int&gt;
+        &lt;int name="1935"&gt;4&lt;/int&gt;
+        &lt;int name="1939"&gt;12&lt;/int&gt;
+        &lt;int name="1940"&gt;17&lt;/int&gt;
+        &lt;int name="1941"&gt;12&lt;/int&gt;
+        &lt;int name="1942"&gt;5&lt;/int&gt;
+        &lt;int name="1943"&gt;10&lt;/int&gt;
+        &lt;int name="1944"&gt;4&lt;/int&gt;
+        &lt;int name="1945"&gt;6&lt;/int&gt;
+        &lt;int name="1946"&gt;27&lt;/int&gt;
+        &lt;int name="1947"&gt;36&lt;/int&gt;
+        &lt;int name="1948"&gt;48&lt;/int&gt;
+        &lt;int name="1949"&gt;59&lt;/int&gt;
+        &lt;int name="1950"&gt;19&lt;/int&gt;
+        &lt;int name="1951"&gt;43&lt;/int&gt;
+        &lt;int name="1952"&gt;24&lt;/int&gt;
+        &lt;int name="1953"&gt;32&lt;/int&gt;
+        &lt;int name="1954"&gt;15&lt;/int&gt;
+        &lt;int name="1955"&gt;16&lt;/int&gt;
+        &lt;int name="1956"&gt;28&lt;/int&gt;
+        &lt;int name="1957"&gt;18&lt;/int&gt;
+        &lt;int name="1958"&gt;33&lt;/int&gt;
+        &lt;int name="1959"&gt;21&lt;/int&gt;
+        &lt;int name="1960"&gt;18&lt;/int&gt;
+        &lt;int name="1961"&gt;20&lt;/int&gt;
+        &lt;int name="1962"&gt;27&lt;/int&gt;
+        &lt;int name="1963"&gt;28&lt;/int&gt;
+        &lt;int name="1964"&gt;29&lt;/int&gt;
+        &lt;int name="1965"&gt;39&lt;/int&gt;
+        &lt;int name="1966"&gt;41&lt;/int&gt;
+        &lt;int name="1967"&gt;37&lt;/int&gt;
+        &lt;int name="1968"&gt;55&lt;/int&gt;
+        &lt;int name="1969"&gt;92&lt;/int&gt;
+        &lt;int name="1970"&gt;59&lt;/int&gt;
+        &lt;int name="1971"&gt;68&lt;/int&gt;
+        &lt;int name="1972"&gt;59&lt;/int&gt;
+        &lt;int name="1973"&gt;66&lt;/int&gt;
+        &lt;int name="1974"&gt;82&lt;/int&gt;
+        &lt;int name="1975"&gt;40&lt;/int&gt;
+        &lt;int name="1976"&gt;72&lt;/int&gt;
+        &lt;int name="1977"&gt;34&lt;/int&gt;
+        &lt;int name="1978"&gt;107&lt;/int&gt;
+        &lt;int name="1979"&gt;121&lt;/int&gt;
+        &lt;int name="1980"&gt;190&lt;/int&gt;
+        &lt;int name="1981"&gt;79&lt;/int&gt;
+      &lt;/lst&gt;
+      &lt;lst name="LIBRARY"&gt;
+        &lt;int name="国立国会図書館"&gt;1497&lt;/int&gt;
+        &lt;int name="岩手県立図書館"&gt;1210&lt;/int&gt;
+        &lt;int name="大阪府立中央図書館国際児童文学館"&gt;927&lt;/int&gt;
+        &lt;int name="札幌市中央図書館"&gt;775&lt;/int&gt;
+        &lt;int name="静岡市立中央図書館"&gt;668&lt;/int&gt;
+        &lt;int name="大阪市立図書館"&gt;651&lt;/int&gt;
+        &lt;int name="広島市立中央図書館"&gt;647&lt;/int&gt;
+        &lt;int name="川崎市立図書館"&gt;633&lt;/int&gt;
+        &lt;int name="堺市立中央図書館"&gt;626&lt;/int&gt;
+        &lt;int name="滋賀県立図書館"&gt;610&lt;/int&gt;
+        &lt;int name="東京都立多摩図書館"&gt;601&lt;/int&gt;
+        &lt;int name="さいたま市立中央図書館"&gt;595&lt;/int&gt;
+        &lt;int name="大阪府立中央図書館"&gt;594&lt;/int&gt;
+        &lt;int name="宮城県図書館"&gt;590&lt;/int&gt;
+        &lt;int name="長崎県立長崎図書館"&gt;583&lt;/int&gt;
+        &lt;int name="石川県立図書館"&gt;579&lt;/int&gt;
+        &lt;int name="相模原市立図書館"&gt;573&lt;/int&gt;
+        &lt;int name="福岡市総合図書館"&gt;573&lt;/int&gt;
+        &lt;int name="和歌山県立図書館"&gt;565&lt;/int&gt;
+        &lt;int name="名古屋市図書館"&gt;549&lt;/int&gt;
+        &lt;int name="埼玉県立久喜図書館"&gt;527&lt;/int&gt;
+        &lt;int name="千葉市中央図書館"&gt;497&lt;/int&gt;
+        &lt;int name="大分県立図書館"&gt;481&lt;/int&gt;
+        &lt;int name="岡山県立図書館"&gt;479&lt;/int&gt;
+        &lt;int name="鹿児島県立図書館"&gt;478&lt;/int&gt;
+        &lt;int name="福島県立図書館"&gt;475&lt;/int&gt;
+        &lt;int name="山梨県立図書館"&gt;465&lt;/int&gt;
+        &lt;int name="福岡県立図書館"&gt;453&lt;/int&gt;
+        &lt;int name="高知県立図書館"&gt;446&lt;/int&gt;
+        &lt;int name="熊本県立図書館"&gt;445&lt;/int&gt;
+        &lt;int name="香川県立図書館"&gt;443&lt;/int&gt;
+        &lt;int name="茨城県立図書館"&gt;439&lt;/int&gt;
+        &lt;int name="福井県立図書館"&gt;427&lt;/int&gt;
+        &lt;int name="三重県立図書館"&gt;417&lt;/int&gt;
+        &lt;int name="秋田県立図書館"&gt;413&lt;/int&gt;
+        &lt;int name="広島県立図書館"&gt;409&lt;/int&gt;
+        &lt;int name="山口県立山口図書館"&gt;408&lt;/int&gt;
+        &lt;int name="サピエ図書館"&gt;401&lt;/int&gt;
+        &lt;int name="徳島県立図書館"&gt;388&lt;/int&gt;
+        &lt;int name="青森県立図書館"&gt;386&lt;/int&gt;
+        &lt;int name="愛媛県立図書館"&gt;383&lt;/int&gt;
+        &lt;int name="佐賀県立図書館"&gt;382&lt;/int&gt;
+        &lt;int name="群馬県立図書館"&gt;380&lt;/int&gt;
+        &lt;int name="島根県立図書館"&gt;360&lt;/int&gt;
+        &lt;int name="千葉県立中央図書館"&gt;359&lt;/int&gt;
+        &lt;int name="愛知県図書館"&gt;341&lt;/int&gt;
+        &lt;int name="静岡県立中央図書館"&gt;334&lt;/int&gt;
+        &lt;int name="栃木県立図書館"&gt;326&lt;/int&gt;
+        &lt;int name="京都府立図書館"&gt;320&lt;/int&gt;
+        &lt;int name="山形県立図書館"&gt;303&lt;/int&gt;
+      &lt;/lst&gt;
+    &lt;/facets&gt;
+  </extraResponseData>
+  <records>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;〔青びかる天弧のはてに〕&lt;/dc:title&gt;
+          &lt;dc:creator&gt;宮沢 賢治 著者&lt;/dc:creator&gt;
+          &lt;dc:description&gt;新修宮沢賢治全集　第六巻&lt;/dc:description&gt;&lt;dc:description&gt;筑摩書房&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年2月15日&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年2月15日初版第1刷&lt;/dc:description&gt;&lt;dc:description&gt;1985（昭和60）年2月25日初版第4刷&lt;/dc:description&gt;
+          &lt;dc:description&gt;新字旧仮名&lt;/dc:description&gt;
+          &lt;dc:publisher&gt;筑摩書房&lt;/dc:publisher&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>6</recordPosition>
+    </record>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;青柳教諭を送る&lt;/dc:title&gt;
+          &lt;dc:creator&gt;宮沢 賢治 著者&lt;/dc:creator&gt;
+          &lt;dc:description&gt;新修宮沢賢治全集　第六巻&lt;/dc:description&gt;&lt;dc:description&gt;筑摩書房&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年2月15日&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年2月15日初版第1刷&lt;/dc:description&gt;&lt;dc:description&gt;1985（昭和60）年2月25日初版第4刷&lt;/dc:description&gt;
+          &lt;dc:description&gt;新字旧仮名&lt;/dc:description&gt;
+          &lt;dc:publisher&gt;筑摩書房&lt;/dc:publisher&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>7</recordPosition>
+    </record>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;秋田街道&lt;/dc:title&gt;
+          &lt;dc:creator&gt;宮沢 賢治 著者&lt;/dc:creator&gt;
+          &lt;dc:description&gt;新修宮沢賢治全集　第十四巻&lt;/dc:description&gt;&lt;dc:description&gt;筑摩書房&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年5月15日&lt;/dc:description&gt;&lt;dc:description&gt;1983（昭和58）年1月20日初版第4刷&lt;/dc:description&gt;
+          &lt;dc:description&gt;新字旧仮名&lt;/dc:description&gt;
+          &lt;dc:publisher&gt;筑摩書房&lt;/dc:publisher&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>8</recordPosition>
+    </record>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;〔あくたうかべる朝の水〕&lt;/dc:title&gt;
+          &lt;dc:creator&gt;宮沢 賢治 著者&lt;/dc:creator&gt;
+          &lt;dc:description&gt;新修宮沢賢治全集　第六巻&lt;/dc:description&gt;&lt;dc:description&gt;筑摩書房&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年2月15日&lt;/dc:description&gt;&lt;dc:description&gt;1980（昭和55）年2月15日初版第1刷&lt;/dc:description&gt;&lt;dc:description&gt;1985（昭和60）年2月25日初版第4刷&lt;/dc:description&gt;
+          &lt;dc:description&gt;新字旧仮名&lt;/dc:description&gt;
+          &lt;dc:publisher&gt;筑摩書房&lt;/dc:publisher&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>9</recordPosition>
+    </record>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;悪の哲学&lt;/dc:title&gt;
+          &lt;dc:creator&gt;鶴見俊輔 [ほか] 編&lt;/dc:creator&gt;
+          &lt;dc:subject&gt;哲学&lt;/dc:subject&gt;
+          &lt;dc:description&gt;その他の編者: 安野光雅, 森毅, 井上ひさし, 池内紀&lt;/dc:description&gt;&lt;dc:description&gt;1990年3月刊「ちくま哲学の森3 悪の哲学」の文庫化&lt;/dc:description&gt;
+          &lt;dc:publisher&gt;筑摩書房&lt;/dc:publisher&gt;
+          &lt;dc:language&gt;ja&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>10</recordPosition>
+    </record>
+  </records>
+</searchRetrieveResponse>
