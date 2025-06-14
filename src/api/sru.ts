@@ -895,33 +895,69 @@ export function extractSRUPaginationInfo(
 }
 
 /**
- * High-level SRU search function with simple parameters
+ * Search NDL (National Diet Library) using SRU (Search/Retrieve via URL) API
  *
- * @param searchParams - Simple search parameters
- * @param options - Optional SRU request options
- * @returns Promise resolving to structured search response
+ * This function provides a high-level interface to search bibliographic records
+ * using the National Diet Library's SRU API. It automatically builds CQL queries
+ * from simple search parameters and supports advanced features like client-side
+ * sorting, filtering, and pagination.
  *
- * @example
+ * @param searchParams - Search parameters object
+ * @param searchParams.anywhere - Search in all fields
+ * @param searchParams.title - Search in title field
+ * @param searchParams.creator - Search in creator/author field
+ * @param searchParams.publisher - Search in publisher field
+ * @param searchParams.subject - Search in subject field
+ * @param searchParams.isbn - Search by ISBN
+ * @param searchParams.issn - Search by ISSN
+ * @param searchParams.language - Filter by language code (e.g., "jpn", "eng")
+ * @param searchParams.dateRange - Filter by publication date range
+ * @param options - Optional search configuration
+ * @param options.maximumRecords - Maximum number of records to return (default: 10, max: 200)
+ * @param options.startRecord - Starting record number (1-based, default: 1)
+ * @param options.recordSchema - Record schema type
+ * @param options.sortBy - Client-side sorting configuration
+ * @param options.filter - Client-side filtering options
+ * @returns Promise resolving to Result containing search response or error
+ *
+ * @example Basic search
  * ```typescript
- * // Simple search by title and author
+ * import { searchSRU } from "@masinc/ndl";
+ *
  * const result = await searchSRU({
- *   title: "夏目漱石",
- *   creator: "作家",
- *   language: "jpn",
+ *   anywhere: "夏目漱石"
+ * }, {
+ *   maximumRecords: 10
  * });
  *
  * if (result.isOk()) {
- *   const { items, pagination } = result.value;
+ *   const { items, pagination, query } = result.value;
+ *   console.log(`Generated CQL: ${query.cql}`);
  *   console.log(`Found ${pagination.totalResults} results`);
- *   console.log(`Page ${pagination.currentPage} of ${pagination.totalPages}`);
- *
+ *   
  *   items.forEach(item => {
- *     console.log(`- ${item.title} by ${item.creators?.join(", ")}`);
+ *     console.log(`${item.title} by ${item.creators?.join(", ")}`);
  *   });
  * } else {
  *   console.error("Search failed:", result.error.message);
  * }
  * ```
+ *
+ * @example Advanced search with multiple criteria
+ * ```typescript
+ * const result = await searchSRU({
+ *   title: "坊っちゃん",
+ *   creator: "夏目漱石",
+ *   language: "jpn",
+ *   dateRange: { from: "1900", to: "1920" }
+ * }, {
+ *   maximumRecords: 5,
+ *   sortBy: { field: "date", order: "desc" }
+ * });
+ * ```
+ *
+ * @see {@link https://ndlsearch.ndl.go.jp/help/api/specifications | NDL Search API Specifications}
+ * @see {@link https://www.loc.gov/standards/sru/ | SRU Standard}
  */
 export async function searchSRU(
   searchParams: SimpleSearchParams,

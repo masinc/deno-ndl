@@ -1,0 +1,61 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.0.3] - 2025-06-14
+
+### Added
+- 統一されたエラーハンドリングシステム
+- 日本語エラーメッセージ対応
+- SRUとOpenSearchの型名一貫性
+- 拡張されたページネーション機能（`hasPreviousPage`、`hasNextPage`、`nextPageParams`等）
+- OpenSearchでのクライアントサイドソート・フィルタ機能
+- 豊富な使用例とドキュメント
+
+### Changed
+- OpenSearch APIの最適化と統一
+- API署名の統一: `searchOpenSearch(query, options)`
+- 型名の一貫性: `SearchItem` → `OpenSearchItem`, `SearchResponse` → `OpenSearchSearchResponse`
+- XMLパーサーの静的インポート化による最適化
+- NDL API 1-based ↔ 0-based インデックス変換の自動化
+
+### Fixed
+- 実際のNDL APIレスポンスに対応したスキーマ検証
+- OpenSearch要素の文字列→数値変換対応
+- XML名前空間属性の完全サポート
+- CDATA/HTML内容のバリデーション緩和
+
+## [0.0.2] - 2025-06-14
+
+### Added
+- SRU (Search/Retrieve via URL) API完全実装
+- OpenSearch API実装
+- CQLクエリビルダー機能
+- 基本的なエラーハンドリング（neverthrow使用）
+- Zod v4による型安全なスキーマ検証
+- ユニットテスト・統合テストの実装
+
+### Features
+- 型安全な書誌検索
+- ページネーション対応
+- エラー型ガード関数
+- 豊富な検索オプション
+
+## [0.0.1] - 2025-06-14 (初期リリース)
+
+### Added
+- プロジェクト基盤構築
+- 基本的なディレクトリ構成
+- Deno 2.0+対応
+- 共通スキーマ定義
+- 基本的なHTTPクライアント
+- 開発環境セットアップ
+
+### Technical
+- TypeScript strict mode対応
+- Zod v4によるバリデーション
+- fast-xml-parser v5.2+によるXMLパース
+- JSR公開対応
