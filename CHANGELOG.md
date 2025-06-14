@@ -12,6 +12,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **MINOR番号**: 新機能追加時に手動でインクリメント
 - **MAJOR番号**: 現在のプロジェクトフェーズでは使用しない
 
+## [0.0.202506150355] - 2025-06-15
+
+### Added
+
+- 包括的なプロジェクトドキュメント更新
+- README.md: ユーザー向け簡潔なAPIガイド
+- CHANGELOG.md: Keep a Changelog形式の変更履歴
+- docs/release.md: 詳細なリリース手順ドキュメント
+- 充実したJSDocによるAPIリファレンス
+- カスタムバージョニング戦略（日時分ベースパッチ）
+
+### Changed
+
+- APIリファレンスをJSRドキュメント参照に変更
+- プロジェクト開発フェーズに応じたドキュメント構成
+- CLAUDE.mdにリリース手順参照を追加
+
+### Fixed
+
+- コードフォーマット統一（CI対応）
+
 ## [0.0.3] - 2025-06-14
 
 ### Added
