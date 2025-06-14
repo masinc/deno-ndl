@@ -14,7 +14,6 @@ import type {
 
 import { SRU } from "../integration/fixtures/mod.ts";
 
-
 Deno.test("buildSRUSearchURL creates correct URL", () => {
   const params: SRUSearchRetrieveRequest = {
     operation: "searchRetrieve",

@@ -38,14 +38,14 @@ deno run --allow-net examples/sru/basic_search.ts
 - 次のレコード位置の利用
 - API制限を考慮した待機時間
 
-### 4. Explain操作 (`explain.ts`)
+### 4. エラーハンドリング (`error_handling.ts`)
 
-SRUサーバーの機能と設定を取得する例です。
+SRU検索時のエラー処理方法の例です。
 
-- サーバー情報の取得
-- 利用可能なインデックスの一覧
-- サポートされているレコードスキーマ
-- データベース情報の表示
+- ネットワークエラーの処理
+- API制限エラーの処理
+- 検索パラメータエラーの処理
+- CQLクエリ構文エラーの処理
 
 ## CQL (Contextual Query Language) について
 

@@ -2,7 +2,7 @@
  * SRUエラーハンドリングの例
  *
  * 改善されたエラーハンドリング機能のデモンストレーション
- * 
+ *
  * 実行方法:
  * deno run --allow-net examples/sru/error_handling.ts
  */
@@ -26,12 +26,14 @@ console.log("\n=== 例1: バリデーションエラー ===");
 try {
   // 空の検索パラメータ
   const result1 = await searchSRU({} as Record<string, never>);
-  
+
   if (result1.isErr()) {
     const error = result1.error;
     console.log(`エラータイプ: ${error.type}`);
     console.log(`詳細メッセージ: ${error.message}`);
-    console.log(`ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`);
+    console.log(
+      `ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`,
+    );
     console.log(`バリデーションエラー?: ${isValidationError(error)}`);
   }
 } catch (error) {
@@ -49,7 +51,7 @@ const result2 = await searchSRU({
 if (result2.isOk()) {
   const { items, diagnostics } = result2.value;
   console.log(`検索結果: ${items.length}件`);
-  
+
   if (diagnostics && diagnostics.length > 0) {
     console.log("診断情報:");
     diagnostics.forEach((d, index) => {
@@ -63,8 +65,10 @@ if (result2.isOk()) {
 } else {
   const error = result2.error;
   console.log(`エラータイプ: ${error.type}`);
-  console.log(`ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`);
-  
+  console.log(
+    `ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`,
+  );
+
   // エラータイプ別の処理例
   if (isAPIError(error)) {
     console.log("APIエラーです。サーバー側の問題の可能性があります。");
@@ -85,41 +89,54 @@ const result3 = await searchSRU({
   dateRange: {
     from: "invalid-date", // 無効な日付形式
     to: "2024",
-  }
+  },
 } as Record<string, unknown>);
 
 if (result3.isErr()) {
   const error = result3.error;
   console.log(`エラータイプ: ${error.type}`);
-  console.log(`ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`);
+  console.log(
+    `ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`,
+  );
   console.log(`バリデーションエラー?: ${isValidationError(error)}`);
 }
 
 // 例4: エラー処理のベストプラクティス
 console.log("\n=== 例4: エラー処理のベストプラクティス ===");
 
-async function handleSearchWithRetry(searchParams: Record<string, unknown>, maxRetries: number = 3): Promise<void> {
+async function handleSearchWithRetry(
+  searchParams: Record<string, unknown>,
+  maxRetries: number = 3,
+): Promise<void> {
   let retryCount = 0;
-  
+
   while (retryCount < maxRetries) {
     const result = await searchSRU(searchParams);
-    
+
     if (result.isOk()) {
       const { items, pagination } = result.value;
-      console.log(`✓ 検索成功: ${pagination.totalResults}件中${items.length}件を表示`);
+      console.log(
+        `✓ 検索成功: ${pagination.totalResults}件中${items.length}件を表示`,
+      );
       return;
     }
-    
+
     const error = result.error;
-    console.log(`試行 ${retryCount + 1}: ${formatUserFriendlyErrorMessage(error)}`);
-    
+    console.log(
+      `試行 ${retryCount + 1}: ${formatUserFriendlyErrorMessage(error)}`,
+    );
+
     // リトライすべきエラーかどうかを判定
-    if (isRateLimitError(error) || (isAPIError(error) && typeof error.cause === "number" && error.cause >= 500)) {
+    if (
+      isRateLimitError(error) ||
+      (isAPIError(error) && typeof error.cause === "number" &&
+        error.cause >= 500)
+    ) {
       retryCount++;
       if (retryCount < maxRetries) {
         const waitTime = Math.pow(2, retryCount) * 1000; // 指数バックオフ
         console.log(`${waitTime / 1000}秒後に再試行します...`);
-        await new Promise(resolve => setTimeout(resolve, waitTime));
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
       }
     } else {
       // リトライしない方が良いエラー
@@ -127,7 +144,7 @@ async function handleSearchWithRetry(searchParams: Record<string, unknown>, maxR
       break;
     }
   }
-  
+
   if (retryCount >= maxRetries) {
     console.log("最大試行回数に達しました。");
   }

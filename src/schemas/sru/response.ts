@@ -1,9 +1,5 @@
 import { z } from "zod/v4";
-import {
-  NonEmptyStringSchema,
-  NonNegativeIntegerSchema,
-  URLSchema,
-} from "../common.ts";
+import { NonEmptyStringSchema, URLSchema } from "../common.ts";
 
 /**
  * SRU response schemas
@@ -88,7 +84,7 @@ export const SRUNextRecordPositionSchema = z.number().int().positive()
  */
 export const SRUExtraResponseDataSchema = z.union([
   z.string(),
-  z.record(z.string(), z.any())
+  z.record(z.string(), z.any()),
 ]).optional();
 
 /**

@@ -2,7 +2,7 @@
  * SRU基本的な検索の例（高レベルAPI使用）
  *
  * 新しい高レベルAPIを使用してCQLクエリを意識せずに検索できます。
- * 
+ *
  * 実行方法:
  * deno run --allow-net examples/sru/basic_search.ts
  */
@@ -20,7 +20,9 @@ const result1 = await searchSRU({
 if (result1.isOk()) {
   const { items, pagination, query } = result1.value;
   console.log(`生成されたCQLクエリ: ${query.cql}`);
-  console.log(`検索結果: ${pagination.totalResults}件中 ${items.length}件を表示`);
+  console.log(
+    `検索結果: ${pagination.totalResults}件中 ${items.length}件を表示`,
+  );
   console.log(`ページ: ${pagination.currentPage} / ${pagination.totalPages}`);
   console.log("");
 
@@ -54,7 +56,9 @@ const result2 = await searchSRU({
 if (result2.isOk()) {
   const { items, pagination, query } = result2.value;
   console.log(`生成されたCQLクエリ: ${query.cql}`);
-  console.log(`検索結果: ${pagination.totalResults}件中 ${items.length}件を表示`);
+  console.log(
+    `検索結果: ${pagination.totalResults}件中 ${items.length}件を表示`,
+  );
   console.log("");
 
   items.forEach((item: SRUSearchItem, index: number) => {
@@ -143,17 +147,23 @@ const result5 = await searchSRU({
 if (result5.isOk()) {
   const { items, pagination, query } = result5.value;
   console.log(`生成されたCQLクエリ: ${query.cql}`);
-  console.log(`検索結果: ${pagination.totalResults}件中 ${items.length}件を表示`);
-  console.log(`現在のページ: ${pagination.currentPage} / ${pagination.totalPages}`);
-  
+  console.log(
+    `検索結果: ${pagination.totalResults}件中 ${items.length}件を表示`,
+  );
+  console.log(
+    `現在のページ: ${pagination.currentPage} / ${pagination.totalPages}`,
+  );
+
   // ページネーション情報の表示
   console.log(`前のページあり: ${pagination.hasPreviousPage}`);
   console.log(`次のページあり: ${pagination.hasNextPage}`);
-  
+
   if (pagination.nextPageParams) {
-    console.log(`次のページパラメータ: startRecord=${pagination.nextPageParams.startRecord}, maximumRecords=${pagination.nextPageParams.maximumRecords}`);
+    console.log(
+      `次のページパラメータ: startRecord=${pagination.nextPageParams.startRecord}, maximumRecords=${pagination.nextPageParams.maximumRecords}`,
+    );
   }
-  
+
   console.log("");
   items.forEach((item: SRUSearchItem, index: number) => {
     console.log(`${index + 1}. ${item.title}`);

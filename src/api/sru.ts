@@ -27,7 +27,6 @@ import {
   type SRUExplainRequest,
   SRUExplainRequestSchema,
   type SRURecordSchemaType,
-  type SRUResponse,
   SRUResponseSchema,
   type SRUSearchRetrieveRequest,
   SRUSearchRetrieveRequestSchema,
@@ -148,32 +147,38 @@ export function parseSRUResponse(
         type: "searchRetrieve",
         response: rawResponse.searchRetrieveResponse,
       };
-      
+
       // Validate the transformed response
-      const validationResult = safeParse(ParsedSRUResponseSchema, parsedResponse);
+      const validationResult = safeParse(
+        ParsedSRUResponseSchema,
+        parsedResponse,
+      );
       if (validationResult.isErr()) {
         return err(validationError(
           `Invalid SRU search response format: ${validationResult.error.message}`,
           validationResult.error,
         ));
       }
-      
+
       return ok(validationResult.value);
     } else if (rawResponse.explainResponse) {
       const parsedResponse: ParsedSRUResponse = {
         type: "explain",
         response: rawResponse.explainResponse,
       };
-      
+
       // Validate the transformed response
-      const validationResult = safeParse(ParsedSRUResponseSchema, parsedResponse);
+      const validationResult = safeParse(
+        ParsedSRUResponseSchema,
+        parsedResponse,
+      );
       if (validationResult.isErr()) {
         return err(validationError(
           `Invalid SRU explain response format: ${validationResult.error.message}`,
           validationResult.error,
         ));
       }
-      
+
       return ok(validationResult.value);
     } else {
       return err(validationError(
@@ -213,7 +218,9 @@ function analyzeSRUDiagnostics(
     const message = diagnostic.message;
 
     // Query syntax errors
-    if (uri.includes("query/syntax") || message.toLowerCase().includes("syntax")) {
+    if (
+      uri.includes("query/syntax") || message.toLowerCase().includes("syntax")
+    ) {
       return querySyntaxError(
         `CQLクエリの構文エラー: ${message}`,
         diagnostic,
@@ -221,7 +228,10 @@ function analyzeSRUDiagnostics(
     }
 
     // Unsupported query errors
-    if (uri.includes("query/feature") || message.toLowerCase().includes("unsupported")) {
+    if (
+      uri.includes("query/feature") ||
+      message.toLowerCase().includes("unsupported")
+    ) {
       return querySyntaxError(
         `サポートされていない検索機能: ${message}`,
         diagnostic,
@@ -265,7 +275,7 @@ async function executeSearchRetrieve(
   includeRawXML?: boolean,
 ): Promise<Result<SRUSearchResponse, NDLError>> {
   const rawResult = await executeSearchRetrieveRaw(params, includeRawXML);
-  
+
   if (rawResult.isErr()) {
     return err(rawResult.error);
   }
@@ -358,7 +368,8 @@ export async function executeSearchRetrieveRaw(
       let userMessage = "";
       switch (response.status) {
         case 400:
-          userMessage = "リクエストに問題があります。検索条件を確認してください。";
+          userMessage =
+            "リクエストに問題があります。検索条件を確認してください。";
           break;
         case 401:
           userMessage = "認証が必要です。";
@@ -370,15 +381,18 @@ export async function executeSearchRetrieveRaw(
           userMessage = "SRU APIエンドポイントが見つかりません。";
           break;
         case 500:
-          userMessage = "サーバーエラーが発生しました。しばらく時間をおいて再試行してください。";
+          userMessage =
+            "サーバーエラーが発生しました。しばらく時間をおいて再試行してください。";
           break;
         case 502:
         case 503:
         case 504:
-          userMessage = "サービスが一時的に利用できません。しばらく時間をおいて再試行してください。";
+          userMessage =
+            "サービスが一時的に利用できません。しばらく時間をおいて再試行してください。";
           break;
         default:
-          userMessage = `SRU APIリクエストが失敗しました（ステータス: ${response.status}）`;
+          userMessage =
+            `SRU APIリクエストが失敗しました（ステータス: ${response.status}）`;
       }
 
       return err(apiError(userMessage, response.status));
@@ -386,11 +400,11 @@ export async function executeSearchRetrieveRaw(
 
     const xmlData = await response.text();
     const parseResult = parseSRUResponse(xmlData);
-    
+
     if (parseResult.isErr()) {
       return err(parseResult.error);
     }
-    
+
     return ok({
       response: parseResult.value,
       ...(includeRawXML && { rawXML: xmlData }),
@@ -679,7 +693,6 @@ export interface SRUSearchResponse extends BaseSRUSearchResponse {
   rawXML?: string;
 }
 
-
 /**
  * Extract search items from SRU response
  *
@@ -712,81 +725,84 @@ export function extractSRUSearchItems(
         // Parse the escaped XML content
         const parser = createXMLParser();
         const parsedData = parser.parse(record.recordData);
-        
+
         // Handle Dublin Core records (srw_dc:dc schema)
         const dc = parsedData["srw_dc:dc"];
         if (dc) {
           if (dc["dc:title"]) {
             item.title = String(dc["dc:title"]);
           }
-          
+
           if (dc["dc:creator"]) {
-            const creators = Array.isArray(dc["dc:creator"]) 
-              ? dc["dc:creator"] 
+            const creators = Array.isArray(dc["dc:creator"])
+              ? dc["dc:creator"]
               : [dc["dc:creator"]];
-            item.creators = creators.map(c => String(c));
+            item.creators = creators.map((c) => String(c));
           }
-          
+
           if (dc["dc:date"]) {
             item.date = String(dc["dc:date"]);
           }
-          
+
           if (dc["dc:language"]) {
             item.language = String(dc["dc:language"]);
           }
-          
+
           if (dc["dc:type"]) {
             item.type = String(dc["dc:type"]);
           }
-          
+
           if (dc["dc:publisher"]) {
-            const publishers = Array.isArray(dc["dc:publisher"]) 
-              ? dc["dc:publisher"] 
+            const publishers = Array.isArray(dc["dc:publisher"])
+              ? dc["dc:publisher"]
               : [dc["dc:publisher"]];
-            item.publishers = publishers.map(p => String(p));
+            item.publishers = publishers.map((p) => String(p));
           }
-          
+
           if (dc["dc:subject"]) {
-            const subjects = Array.isArray(dc["dc:subject"]) 
-              ? dc["dc:subject"] 
+            const subjects = Array.isArray(dc["dc:subject"])
+              ? dc["dc:subject"]
               : [dc["dc:subject"]];
-            item.subjects = subjects.map(s => String(s));
+            item.subjects = subjects.map((s) => String(s));
           }
         }
-        
+
         // Handle DCNDL RDF records (dcndl schema)
         const rdf = parsedData["rdf:RDF"];
         if (rdf && rdf["dcndl:BibResource"]) {
           const bibResources = Array.isArray(rdf["dcndl:BibResource"])
             ? rdf["dcndl:BibResource"]
             : [rdf["dcndl:BibResource"]];
-          
+
           // Find the main bibliographic resource (usually the first one with title)
           for (const bibResource of bibResources) {
             if (bibResource["dcterms:title"]) {
               item.title = String(bibResource["dcterms:title"]);
-              
+
               // Extract creators
               if (bibResource["dc:creator"]) {
                 const creators = Array.isArray(bibResource["dc:creator"])
                   ? bibResource["dc:creator"]
                   : [bibResource["dc:creator"]];
-                item.creators = creators.map(c => String(c));
+                item.creators = creators.map((c) => String(c));
               }
-              
+
               // Extract publishers
-              if (bibResource["dcterms:publisher"] && bibResource["dcterms:publisher"]["foaf:Agent"]) {
+              if (
+                bibResource["dcterms:publisher"] &&
+                bibResource["dcterms:publisher"]["foaf:Agent"]
+              ) {
                 const agent = bibResource["dcterms:publisher"]["foaf:Agent"];
                 if (agent["foaf:name"]) {
                   item.publishers = [String(agent["foaf:name"])];
                 }
               }
-              
+
               // Extract date
               if (bibResource["dcterms:date"]) {
                 item.date = String(bibResource["dcterms:date"]);
               }
-              
+
               // Extract language
               if (bibResource["dcterms:language"]) {
                 const lang = bibResource["dcterms:language"];
@@ -797,7 +813,7 @@ export function extractSRUSearchItems(
                   item.language = String(lang);
                 }
               }
-              
+
               break; // Use the first resource with title
             }
           }
@@ -849,15 +865,19 @@ export function extractSRUPaginationInfo(
   const hasPreviousPage = currentPage > 1;
   const hasNextPage = currentPage < totalPages;
 
-  const nextPageParams = hasNextPage ? {
-    startRecord: startIndex + itemsPerPage,
-    maximumRecords: itemsPerPage,
-  } : undefined;
+  const nextPageParams = hasNextPage
+    ? {
+      startRecord: startIndex + itemsPerPage,
+      maximumRecords: itemsPerPage,
+    }
+    : undefined;
 
-  const previousPageParams = hasPreviousPage ? {
-    startRecord: Math.max(1, startIndex - itemsPerPage),
-    maximumRecords: itemsPerPage,
-  } : undefined;
+  const previousPageParams = hasPreviousPage
+    ? {
+      startRecord: Math.max(1, startIndex - itemsPerPage),
+      maximumRecords: itemsPerPage,
+    }
+    : undefined;
 
   return {
     totalResults,
@@ -914,7 +934,7 @@ export async function searchSRU(
   }
 
   const cqlQuery = cqlResult.value;
-  
+
   // If no search parameters provided, return empty results
   if (!cqlQuery) {
     return ok({
@@ -948,27 +968,27 @@ export async function searchSRU(
   };
 
   const result = await executeSearchRetrieve(sruParams, options?.includeRawXML);
-  
+
   if (result.isErr()) {
     return err(result.error);
   }
-  
+
   let { items } = result.value;
-  
+
   // Apply client-side filtering
   if (options?.filter) {
     if (options.filter.language) {
-      const languages = Array.isArray(options.filter.language) 
-        ? options.filter.language 
+      const languages = Array.isArray(options.filter.language)
+        ? options.filter.language
         : [options.filter.language];
-      items = items.filter(item => 
+      items = items.filter((item) =>
         item.language && languages.includes(item.language)
       );
     }
-    
+
     if (options.filter.dateRange) {
       const { from, to } = options.filter.dateRange;
-      items = items.filter(item => {
+      items = items.filter((item) => {
         if (!item.date) return true;
         const year = item.date.match(/(\d{4})/)?.[1];
         if (!year) return true;
@@ -977,23 +997,23 @@ export async function searchSRU(
         return true;
       });
     }
-    
+
     if (options.filter.creator) {
-      items = items.filter(item =>
-        item.creators?.some(creator =>
+      items = items.filter((item) =>
+        item.creators?.some((creator) =>
           creator.toLowerCase().includes(options.filter!.creator!.toLowerCase())
         )
       );
     }
   }
-  
+
   // Apply client-side sorting
   if (options?.sortBy) {
     const { field, order = "asc" } = options.sortBy;
-    
+
     items = [...items].sort((a, b) => {
       let comparison = 0;
-      
+
       switch (field) {
         case "title": {
           comparison = a.title.localeCompare(b.title, "ja", { numeric: true });
@@ -1002,7 +1022,9 @@ export async function searchSRU(
         case "creator": {
           const aCreator = a.creators?.[0] || "";
           const bCreator = b.creators?.[0] || "";
-          comparison = aCreator.localeCompare(bCreator, "ja", { numeric: true });
+          comparison = aCreator.localeCompare(bCreator, "ja", {
+            numeric: true,
+          });
           break;
         }
         case "date": {
@@ -1012,15 +1034,14 @@ export async function searchSRU(
           break;
         }
       }
-      
+
       return order === "desc" ? -comparison : comparison;
     });
   }
-  
+
   // Return modified response
   return ok({
     ...result.value,
     items,
   });
 }
-

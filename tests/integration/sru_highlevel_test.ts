@@ -13,13 +13,13 @@ Deno.test("searchSRU - simple title search", async () => {
   });
 
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     const response = result.value;
     assertExists(response.items);
     assertExists(response.pagination);
     assertExists(response.query);
-    
+
     assertEquals(response.query.cql, 'title="夏目漱石"');
     assertEquals(response.pagination.itemsPerPage, 5);
   }
@@ -54,7 +54,7 @@ Deno.test("searchSRU - complex search with multiple fields", async () => {
     const response = result.value;
     assertExists(response.items);
     assertExists(response.pagination);
-    
+
     // Verify CQL query contains all elements
     const cql = response.query.cql;
     assertEquals(cql.includes('title="文学"'), true);
@@ -77,13 +77,17 @@ Deno.test("searchSRU - search with exclusions", async () => {
 
   // Test should handle both success and controlled errors
   if (result.isErr()) {
-    console.log("Exclusion test error:", result.error.type, result.error.message);
+    console.log(
+      "Exclusion test error:",
+      result.error.type,
+      result.error.message,
+    );
     assertExists(result.error.type);
     assertExists(result.error.message);
   } else {
     const response = result.value;
     assertExists(response.query.cql);
-    
+
     const cql = response.query.cql;
     assertEquals(cql.includes('title="小説"'), true);
     assertEquals(cql.includes("NOT"), true);
@@ -98,7 +102,7 @@ Deno.test("searchSRU - empty search parameters", async () => {
   const result = await searchSRU(params);
 
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     const response = result.value;
     assertEquals(response.items.length, 0);
@@ -125,7 +129,6 @@ Deno.test("searchSRU - invalid ISBN format", async () => {
   }
 });
 
-
 Deno.test("searchSRU - pagination options", async () => {
   const params: SimpleSearchParams = {
     anywhere: "図書",
@@ -138,7 +141,7 @@ Deno.test("searchSRU - pagination options", async () => {
   });
 
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     const response = result.value;
     assertEquals(response.pagination.itemsPerPage, 15);

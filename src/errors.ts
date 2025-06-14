@@ -206,7 +206,7 @@ export function formatUserFriendlyErrorMessage(error: NDLError): string {
   switch (error.type) {
     case "network":
       return "ネットワークエラーが発生しました。インターネット接続を確認してください。";
-    
+
     case "api":
       if (typeof error.cause === "number") {
         const statusCode = error.cause;
@@ -230,19 +230,19 @@ export function formatUserFriendlyErrorMessage(error: NDLError): string {
         }
       }
       return "APIエラーが発生しました。しばらく時間をおいて再試行してください。";
-    
+
     case "validation":
       return "入力データの形式に問題があります。検索条件を見直してください。";
-    
+
     case "sru_diagnostic":
       return "検索処理でエラーが発生しました。検索条件を確認してください。";
-    
+
     case "query_syntax":
       return "検索クエリの構文に問題があります。検索条件を見直してください。";
-    
+
     case "rate_limit":
       return "リクエスト回数の制限に達しました。しばらくお待ちください。";
-    
+
     default:
       return "予期しないエラーが発生しました。";
   }

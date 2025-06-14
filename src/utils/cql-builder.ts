@@ -1,8 +1,8 @@
 /**
  * CQL Query Builder implementation using Zod schemas
- * 
+ *
  * Type-safe CQL query construction for NDL SRU API
- * 
+ *
  * @module
  */
 
@@ -24,7 +24,7 @@ import {
   SimpleSearchParamsSchema,
 } from "../schemas/sru/query-builder.ts";
 import { safeParse } from "../schemas/utils.ts";
-import { type NDLError, querySyntaxError, validationError } from "../errors.ts";
+import { type NDLError, validationError } from "../errors.ts";
 
 /**
  * CQL Query Builder class with Zod validation
@@ -36,7 +36,9 @@ export class CQLQueryBuilder {
   constructor(options: Partial<CQLBuilderOptions> = {}) {
     const validationResult = safeParse(CQLBuilderOptionsSchema, options);
     if (validationResult.isErr()) {
-      throw new Error(`Invalid builder options: ${validationResult.error.message}`);
+      throw new Error(
+        `Invalid builder options: ${validationResult.error.message}`,
+      );
     }
     this.options = validationResult.value;
   }
@@ -49,7 +51,9 @@ export class CQLQueryBuilder {
       return this;
     }
 
-    const escapedValue = this.options.autoEscape ? this.escapeValue(value) : value;
+    const escapedValue = this.options.autoEscape
+      ? this.escapeValue(value)
+      : value;
     const condition = this.buildFieldCondition(field, escapedValue, operator);
     this.conditions.push(condition);
     return this;
@@ -113,12 +117,12 @@ export class CQLQueryBuilder {
    */
   language(languages: NDLLanguageCode | NDLLanguageCode[]): this {
     const langArray = Array.isArray(languages) ? languages : [languages];
-    
+
     if (langArray.length === 1) {
       return this.field("language", langArray[0], "=");
     }
 
-    const langConditions = langArray.map(lang => 
+    const langConditions = langArray.map((lang) =>
       this.buildFieldCondition("language", lang, "=")
     );
     this.conditions.push(`(${langConditions.join(" OR ")})`);
@@ -131,9 +135,9 @@ export class CQLQueryBuilder {
   dateRange(range: DateRange): this {
     const validationResult = safeParse(
       SimpleSearchParamsSchema.pick({ dateRange: true }),
-      { dateRange: range }
+      { dateRange: range },
     );
-    
+
     if (validationResult.isErr()) {
       throw new Error(`Invalid date range: ${validationResult.error.message}`);
     }
@@ -149,8 +153,8 @@ export class CQLQueryBuilder {
     }
 
     if (conditions.length > 0) {
-      const dateCondition = conditions.length === 1 
-        ? conditions[0] 
+      const dateCondition = conditions.length === 1
+        ? conditions[0]
         : `(${conditions.join(" AND ")})`;
       this.conditions.push(dateCondition);
     }
@@ -174,7 +178,7 @@ export class CQLQueryBuilder {
       const current = this.conditions.join(` ${this.options.defaultOperator} `);
       this.conditions = [
         this.options.addParentheses ? `(${current})` : current,
-        this.options.addParentheses ? `(${otherQuery})` : otherQuery
+        this.options.addParentheses ? `(${otherQuery})` : otherQuery,
       ];
     } else if (otherQuery) {
       this.conditions.push(otherQuery);
@@ -202,7 +206,9 @@ export class CQLQueryBuilder {
    */
   not(): this {
     if (this.conditions.length > 0) {
-      const combined = this.conditions.join(` ${this.options.defaultOperator} `);
+      const combined = this.conditions.join(
+        ` ${this.options.defaultOperator} `,
+      );
       this.conditions = [`NOT (${combined})`];
     }
     return this;
@@ -240,8 +246,10 @@ export class CQLQueryBuilder {
     }
 
     // Check for very broad searches
-    if (this.conditions.some(c => c.includes('anywhere'))) {
-      warnings.push("Full-text search across all fields may return many results");
+    if (this.conditions.some((c) => c.includes("anywhere"))) {
+      warnings.push(
+        "Full-text search across all fields may return many results",
+      );
       complexity = Math.min(10, complexity + 1);
     }
 
@@ -257,7 +265,7 @@ export class CQLQueryBuilder {
     if (validationResult.isErr()) {
       return err(validationError(
         `Query validation failed: ${validationResult.error.message}`,
-        validationResult.error
+        validationResult.error,
       ));
     }
 
@@ -275,7 +283,11 @@ export class CQLQueryBuilder {
   /**
    * Build field condition string
    */
-  private buildFieldCondition(field: string, value: string, operator: CQLOperator): string {
+  private buildFieldCondition(
+    field: string,
+    value: string,
+    operator: CQLOperator,
+  ): string {
     switch (operator) {
       case "=":
       case "exact":
@@ -312,7 +324,9 @@ export class CQLQueryBuilder {
 /**
  * Create a new CQL query builder
  */
-export function createCQLBuilder(options?: Partial<CQLBuilderOptions>): CQLQueryBuilder {
+export function createCQLBuilder(
+  options?: Partial<CQLBuilderOptions>,
+): CQLQueryBuilder {
   return new CQLQueryBuilder(options);
 }
 
@@ -320,13 +334,13 @@ export function createCQLBuilder(options?: Partial<CQLBuilderOptions>): CQLQuery
  * Build CQL query from simple search parameters
  */
 export function buildSimpleCQLQuery(
-  params: SimpleSearchParams
+  params: SimpleSearchParams,
 ): Result<string, NDLError> {
   const validationResult = safeParse(SimpleSearchParamsSchema, params);
   if (validationResult.isErr()) {
     return err(validationError(
       "検索パラメータの形式が正しくありません。検索条件を確認してください。",
-      validationResult.error
+      validationResult.error,
     ));
   }
 
@@ -410,19 +424,19 @@ export function buildSimpleCQLQuery(
  * Build CQL query from advanced search parameters
  */
 export function buildAdvancedCQLQuery(
-  params: AdvancedSearchParams
+  params: AdvancedSearchParams,
 ): Result<string, NDLError> {
   const validationResult = safeParse(AdvancedSearchParamsSchema, params);
   if (validationResult.isErr()) {
     return err(validationError(
       "高度な検索パラメータの形式が正しくありません。検索条件を確認してください。",
-      validationResult.error
+      validationResult.error,
     ));
   }
 
   const validatedParams = validationResult.value as AdvancedSearchParams;
   const builder = createCQLBuilder({
-    defaultOperator: validatedParams.operator || "AND"
+    defaultOperator: validatedParams.operator || "AND",
   });
 
   if (validatedParams.fields) {
@@ -437,7 +451,9 @@ export function buildAdvancedCQLQuery(
 /**
  * Validate a CQL query string
  */
-export function validateCQLQuery(query: string): Result<QueryValidationResult, NDLError> {
+export function validateCQLQuery(
+  query: string,
+): Result<QueryValidationResult, NDLError> {
   const errors: string[] = [];
   const warnings: string[] = [];
   let complexity = 1;
@@ -449,7 +465,7 @@ export function validateCQLQuery(query: string): Result<QueryValidationResult, N
   // Basic syntax validation
   const openParens = (query.match(/\(/g) || []).length;
   const closeParens = (query.match(/\)/g) || []).length;
-  
+
   if (openParens !== closeParens) {
     errors.push("Unmatched parentheses in query");
   }
@@ -464,7 +480,7 @@ export function validateCQLQuery(query: string): Result<QueryValidationResult, N
   const andCount = (query.match(/\bAND\b/gi) || []).length;
   const orCount = (query.match(/\bOR\b/gi) || []).length;
   const notCount = (query.match(/\bNOT\b/gi) || []).length;
-  
+
   complexity = Math.min(10, 1 + andCount + orCount + (notCount * 2));
 
   if (complexity > 7) {
@@ -483,7 +499,7 @@ export function validateCQLQuery(query: string): Result<QueryValidationResult, N
   if (validationResult.isErr()) {
     return err(validationError(
       `Query validation failed: ${validationResult.error.message}`,
-      validationResult.error
+      validationResult.error,
     ));
   }
 

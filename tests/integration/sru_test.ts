@@ -10,10 +10,10 @@
 
 import { assertEquals, assertGreater } from "@std/assert";
 import {
+  executeSearchRetrieveRaw,
   explainSRU,
   parseSRUResponse,
   searchSRU,
-  executeSearchRetrieveRaw,
   type SRUSearchItem,
 } from "../../src/api/sru.ts";
 import { SRU } from "./fixtures/mod.ts";
@@ -178,7 +178,10 @@ Deno.test("searchSRUWithCQL handles fixture data correctly", () => {
       assertEquals(typeof firstRecord.recordSchema, "string");
       assertEquals(typeof firstRecord.recordPacking, "string");
       // recordData can be string or object
-      assertEquals(["string", "object"].includes(typeof firstRecord.recordData), true);
+      assertEquals(
+        ["string", "object"].includes(typeof firstRecord.recordData),
+        true,
+      );
     }
   }
 });
@@ -228,11 +231,16 @@ Deno.test({
         continue;
       }
 
-      const response = result.value;
-      console.log(`  Found ${response.pagination.totalResults} results`);
+      const response = result.value.response;
 
-      if (response.items.length > 0) {
-        console.log(`  First result: ${response.items[0].title}`);
+      if (response.type === "searchRetrieve") {
+        const numberOfRecords = response.response.numberOfRecords || 0;
+        console.log(`  Found ${numberOfRecords} results`);
+
+        const records = response.response.records?.record;
+        if (records && (Array.isArray(records) ? records.length > 0 : true)) {
+          console.log(`  Records available`);
+        }
       }
 
       // レート制限を避けるため少し待機

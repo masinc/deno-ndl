@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assertEquals } from "@std/assert";
 import {
   buildAdvancedCQLQuery,
   buildSimpleCQLQuery,
@@ -50,7 +50,7 @@ Deno.test("CQLQueryBuilder - date range", () => {
 Deno.test("CQLQueryBuilder - complex query with AND/OR", () => {
   const builder1 = createCQLBuilder().title("夏目漱石");
   const builder2 = createCQLBuilder().creator("森鴎外");
-  
+
   const query = builder1.or(builder2).build();
   assertEquals(query, '(title="夏目漱石") OR (creator="森鴎外")');
 });
@@ -75,11 +75,11 @@ Deno.test("buildSimpleCQLQuery - basic parameters", () => {
 
   const result = buildSimpleCQLQuery(params);
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(
       result.value,
-      'title="夏目漱石" AND creator="作家" AND language="jpn"'
+      'title="夏目漱石" AND creator="作家" AND language="jpn"',
     );
   }
 });
@@ -95,11 +95,11 @@ Deno.test("buildSimpleCQLQuery - with exclusions", () => {
 
   const result = buildSimpleCQLQuery(params);
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     const query = result.value;
     assertEquals(query.includes('title="文学"'), true);
-    assertEquals(query.includes('NOT'), true);
+    assertEquals(query.includes("NOT"), true);
     assertEquals(query.includes('language="eng"'), true);
     assertEquals(query.includes('creator="翻訳者"'), true);
   }
@@ -137,11 +137,11 @@ Deno.test("buildAdvancedCQLQuery - multiple fields", () => {
 
   const result = buildAdvancedCQLQuery(params);
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(
       result.value,
-      'title="夏目漱石" AND type="Book"'
+      'title="夏目漱石" AND type="Book"',
     );
   }
 });
@@ -151,7 +151,7 @@ Deno.test("buildAdvancedCQLQuery - multiple fields", () => {
 Deno.test("validateCQLQuery - valid query", () => {
   const result = validateCQLQuery('title="夏目漱石" AND creator="作家"');
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(result.value.isValid, true);
     assertEquals(result.value.errors.length, 0);
@@ -161,7 +161,7 @@ Deno.test("validateCQLQuery - valid query", () => {
 Deno.test("validateCQLQuery - empty query", () => {
   const result = validateCQLQuery("");
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(result.value.isValid, false);
     assertEquals(result.value.errors.includes("Query cannot be empty"), true);
@@ -171,20 +171,26 @@ Deno.test("validateCQLQuery - empty query", () => {
 Deno.test("validateCQLQuery - unmatched parentheses", () => {
   const result = validateCQLQuery('(title="test" AND creator="author"');
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(result.value.isValid, false);
-    assertEquals(result.value.errors.includes("Unmatched parentheses in query"), true);
+    assertEquals(
+      result.value.errors.includes("Unmatched parentheses in query"),
+      true,
+    );
   }
 });
 
 Deno.test("validateCQLQuery - unmatched quotes", () => {
   const result = validateCQLQuery('title="test AND creator="author"');
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(result.value.isValid, false);
-    assertEquals(result.value.errors.includes("Unmatched quotes in query"), true);
+    assertEquals(
+      result.value.errors.includes("Unmatched quotes in query"),
+      true,
+    );
   }
 });
 
@@ -218,7 +224,7 @@ Deno.test("CQLQueryBuilder - validation with warnings", () => {
 
   const result = builder.validate();
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(result.value.isValid, true);
     assertEquals(result.value.warnings.length > 0, true);
@@ -231,7 +237,7 @@ Deno.test("buildSimpleCQLQuery - empty parameters", () => {
 
   const result = buildSimpleCQLQuery(params);
   assertEquals(result.isOk(), true);
-  
+
   if (result.isOk()) {
     assertEquals(result.value, "");
   }
@@ -239,13 +245,13 @@ Deno.test("buildSimpleCQLQuery - empty parameters", () => {
 
 Deno.test("CQLQueryBuilder - different operators", () => {
   const builder = createCQLBuilder();
-  
+
   builder.field("title", "夏目漱石", "exact");
   assertEquals(builder.build(), 'title="夏目漱石"');
-  
+
   builder.reset().field("title", "夏目", "starts");
   assertEquals(builder.build(), 'title="夏目*"');
-  
+
   builder.reset().field("title", "漱石", "ends");
   assertEquals(builder.build(), 'title="*漱石"');
 });
