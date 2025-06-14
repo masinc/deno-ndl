@@ -22,3 +22,9 @@ export const OPENSEARCH = {
   EXTRACT_RESULTS: loadFixture("opensearch_extract_results_response.xml"),
   URL_BUILDING: loadFixture("opensearch_url_building_response.xml"),
 } as const;
+
+export const SRU = {
+  BASIC_SEARCH: loadFixture("sru_basic_search_response.xml"),
+  EXPLAIN: loadFixture("sru_explain_response.xml"),
+  PAGINATION: loadFixture("sru_pagination_response.xml"),
+} as const;

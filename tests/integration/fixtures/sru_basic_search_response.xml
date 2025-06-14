@@ -1,0 +1,203 @@
+<searchRetrieveResponse xmlns="http://www.loc.gov/zing/srw/">
+  <version>1.2</version>
+  <numberOfRecords>7208</numberOfRecords>
+  <nextRecordPosition>4</nextRecordPosition>
+  <extraResponseData>
+    &lt;facets&gt;
+      &lt;lst name="REPOSITORY_NO"&gt;
+        &lt;int name="R000000004"&gt;2542&lt;/int&gt;
+        &lt;int name="R100000001"&gt;1599&lt;/int&gt;
+        &lt;int name="R100000002"&gt;1437&lt;/int&gt;
+        &lt;int name="R100000136"&gt;919&lt;/int&gt;
+        &lt;int name="R000000025"&gt;296&lt;/int&gt;
+        &lt;int name="R100000134"&gt;147&lt;/int&gt;
+        &lt;int name="R100000039"&gt;74&lt;/int&gt;
+        &lt;int name="R100000038"&gt;63&lt;/int&gt;
+        &lt;int name="R100000094"&gt;48&lt;/int&gt;
+        &lt;int name="R100000049"&gt;17&lt;/int&gt;
+        &lt;int name="R100000128"&gt;13&lt;/int&gt;
+        &lt;int name="R100000147"&gt;11&lt;/int&gt;
+        &lt;int name="R100000140"&gt;10&lt;/int&gt;
+        &lt;int name="R000000050"&gt;6&lt;/int&gt;
+        &lt;int name="R100000137"&gt;6&lt;/int&gt;
+        &lt;int name="R000000014"&gt;3&lt;/int&gt;
+        &lt;int name="R000000016"&gt;3&lt;/int&gt;
+        &lt;int name="R000000054"&gt;3&lt;/int&gt;
+        &lt;int name="R100000126"&gt;3&lt;/int&gt;
+        &lt;int name="R000000202"&gt;2&lt;/int&gt;
+        &lt;int name="R100000073"&gt;2&lt;/int&gt;
+        &lt;int name="R000000005"&gt;1&lt;/int&gt;
+        &lt;int name="R100000092"&gt;1&lt;/int&gt;
+        &lt;int name="R100000102"&gt;1&lt;/int&gt;
+        &lt;int name="R100000114"&gt;1&lt;/int&gt;
+      &lt;/lst&gt;
+      &lt;lst name="NDC"&gt;
+        &lt;int name="+"&gt;5&lt;/int&gt;
+        &lt;int name="0"&gt;46&lt;/int&gt;
+        &lt;int name="1"&gt;25&lt;/int&gt;
+        &lt;int name="2"&gt;63&lt;/int&gt;
+        &lt;int name="3"&gt;25&lt;/int&gt;
+        &lt;int name="4"&gt;6&lt;/int&gt;
+        &lt;int name="5"&gt;4&lt;/int&gt;
+        &lt;int name="6"&gt;1&lt;/int&gt;
+        &lt;int name="7"&gt;50&lt;/int&gt;
+        &lt;int name="8"&gt;21&lt;/int&gt;
+        &lt;int name="9"&gt;2391&lt;/int&gt;
+        &lt;int name="C"&gt;2&lt;/int&gt;
+        &lt;int name="E"&gt;1&lt;/int&gt;
+        &lt;int name="H"&gt;5&lt;/int&gt;
+        &lt;int name="J"&gt;1&lt;/int&gt;
+        &lt;int name="K"&gt;10&lt;/int&gt;
+        &lt;int name="L"&gt;6&lt;/int&gt;
+        &lt;int name="M"&gt;3&lt;/int&gt;
+        &lt;int name="N"&gt;1&lt;/int&gt;
+        &lt;int name="R"&gt;1&lt;/int&gt;
+        &lt;int name="S"&gt;3&lt;/int&gt;
+        &lt;int name="８"&gt;1&lt;/int&gt;
+        &lt;int name="９"&gt;42&lt;/int&gt;
+        &lt;int name="Ｊ"&gt;1&lt;/int&gt;
+      &lt;/lst&gt;
+      &lt;lst name="ISSUED_DATE"&gt;
+        &lt;int name="1114"&gt;1&lt;/int&gt;
+        &lt;int name="1896"&gt;1&lt;/int&gt;
+        &lt;int name="1897"&gt;2&lt;/int&gt;
+        &lt;int name="1900"&gt;1&lt;/int&gt;
+        &lt;int name="1903"&gt;1&lt;/int&gt;
+        &lt;int name="1906"&gt;3&lt;/int&gt;
+        &lt;int name="1907"&gt;1&lt;/int&gt;
+        &lt;int name="1910"&gt;1&lt;/int&gt;
+        &lt;int name="1911"&gt;1&lt;/int&gt;
+        &lt;int name="1912"&gt;1&lt;/int&gt;
+        &lt;int name="1915"&gt;8&lt;/int&gt;
+        &lt;int name="1917"&gt;12&lt;/int&gt;
+        &lt;int name="1919"&gt;2&lt;/int&gt;
+        &lt;int name="1920"&gt;1&lt;/int&gt;
+        &lt;int name="1921"&gt;2&lt;/int&gt;
+        &lt;int name="1924"&gt;1&lt;/int&gt;
+        &lt;int name="1925"&gt;2&lt;/int&gt;
+        &lt;int name="1926"&gt;4&lt;/int&gt;
+        &lt;int name="1927"&gt;12&lt;/int&gt;
+        &lt;int name="1928"&gt;9&lt;/int&gt;
+        &lt;int name="1929"&gt;8&lt;/int&gt;
+        &lt;int name="1930"&gt;5&lt;/int&gt;
+        &lt;int name="1931"&gt;7&lt;/int&gt;
+        &lt;int name="1932"&gt;6&lt;/int&gt;
+        &lt;int name="1933"&gt;9&lt;/int&gt;
+        &lt;int name="1934"&gt;5&lt;/int&gt;
+        &lt;int name="1935"&gt;7&lt;/int&gt;
+        &lt;int name="1936"&gt;24&lt;/int&gt;
+        &lt;int name="1937"&gt;6&lt;/int&gt;
+        &lt;int name="1938"&gt;6&lt;/int&gt;
+        &lt;int name="1940"&gt;2&lt;/int&gt;
+        &lt;int name="1941"&gt;3&lt;/int&gt;
+        &lt;int name="1942"&gt;17&lt;/int&gt;
+        &lt;int name="1943"&gt;14&lt;/int&gt;
+        &lt;int name="1944"&gt;4&lt;/int&gt;
+        &lt;int name="1945"&gt;1&lt;/int&gt;
+        &lt;int name="1946"&gt;30&lt;/int&gt;
+        &lt;int name="1947"&gt;31&lt;/int&gt;
+        &lt;int name="1948"&gt;58&lt;/int&gt;
+        &lt;int name="1949"&gt;28&lt;/int&gt;
+        &lt;int name="1950"&gt;33&lt;/int&gt;
+        &lt;int name="1951"&gt;23&lt;/int&gt;
+        &lt;int name="1952"&gt;21&lt;/int&gt;
+        &lt;int name="1953"&gt;106&lt;/int&gt;
+        &lt;int name="1954"&gt;54&lt;/int&gt;
+        &lt;int name="1955"&gt;77&lt;/int&gt;
+        &lt;int name="1956"&gt;61&lt;/int&gt;
+        &lt;int name="1957"&gt;23&lt;/int&gt;
+        &lt;int name="1958"&gt;44&lt;/int&gt;
+        &lt;int name="1959"&gt;19&lt;/int&gt;
+      &lt;/lst&gt;
+      &lt;lst name="LIBRARY"&gt;
+        &lt;int name="国立国会図書館"&gt;3983&lt;/int&gt;
+        &lt;int name="熊本県立図書館"&gt;639&lt;/int&gt;
+        &lt;int name="大阪府立中央図書館"&gt;627&lt;/int&gt;
+        &lt;int name="東京都立中央図書館"&gt;577&lt;/int&gt;
+        &lt;int name="横浜市立図書館"&gt;575&lt;/int&gt;
+        &lt;int name="大阪市立図書館"&gt;567&lt;/int&gt;
+        &lt;int name="名古屋市図書館"&gt;498&lt;/int&gt;
+        &lt;int name="滋賀県立図書館"&gt;486&lt;/int&gt;
+        &lt;int name="岡山県立図書館"&gt;462&lt;/int&gt;
+        &lt;int name="さいたま市立中央図書館"&gt;460&lt;/int&gt;
+        &lt;int name="長崎県立長崎図書館"&gt;447&lt;/int&gt;
+        &lt;int name="静岡市立中央図書館"&gt;423&lt;/int&gt;
+        &lt;int name="広島市立中央図書館"&gt;413&lt;/int&gt;
+        &lt;int name="札幌市中央図書館"&gt;409&lt;/int&gt;
+        &lt;int name="愛知県図書館"&gt;393&lt;/int&gt;
+        &lt;int name="川崎市立図書館"&gt;390&lt;/int&gt;
+        &lt;int name="埼玉県立久喜図書館"&gt;381&lt;/int&gt;
+        &lt;int name="宮城県図書館"&gt;380&lt;/int&gt;
+        &lt;int name="北海道立図書館"&gt;376&lt;/int&gt;
+        &lt;int name="石川県立図書館"&gt;372&lt;/int&gt;
+        &lt;int name="京都府立図書館"&gt;357&lt;/int&gt;
+        &lt;int name="栃木県立図書館"&gt;351&lt;/int&gt;
+        &lt;int name="大分県立図書館"&gt;348&lt;/int&gt;
+        &lt;int name="福岡県立図書館"&gt;342&lt;/int&gt;
+        &lt;int name="福島県立図書館"&gt;339&lt;/int&gt;
+        &lt;int name="香川県立図書館"&gt;335&lt;/int&gt;
+        &lt;int name="堺市立中央図書館"&gt;334&lt;/int&gt;
+        &lt;int name="福岡市総合図書館"&gt;331&lt;/int&gt;
+        &lt;int name="千葉市中央図書館"&gt;329&lt;/int&gt;
+        &lt;int name="兵庫県立図書館"&gt;323&lt;/int&gt;
+        &lt;int name="茨城県立図書館"&gt;314&lt;/int&gt;
+        &lt;int name="神奈川県立図書館"&gt;311&lt;/int&gt;
+        &lt;int name="徳島県立図書館"&gt;308&lt;/int&gt;
+        &lt;int name="新潟県立図書館"&gt;307&lt;/int&gt;
+        &lt;int name="佐賀県立図書館"&gt;303&lt;/int&gt;
+        &lt;int name="鳥取県立図書館"&gt;296&lt;/int&gt;
+        &lt;int name="山梨県立図書館"&gt;293&lt;/int&gt;
+        &lt;int name="秋田県立図書館"&gt;293&lt;/int&gt;
+        &lt;int name="和歌山県立図書館"&gt;288&lt;/int&gt;
+        &lt;int name="岐阜県図書館"&gt;288&lt;/int&gt;
+        &lt;int name="広島県立図書館"&gt;287&lt;/int&gt;
+        &lt;int name="鹿児島県立図書館"&gt;287&lt;/int&gt;
+        &lt;int name="高知県立図書館"&gt;286&lt;/int&gt;
+        &lt;int name="相模原市立図書館"&gt;283&lt;/int&gt;
+        &lt;int name="福井県立図書館"&gt;279&lt;/int&gt;
+        &lt;int name="山形県立図書館"&gt;278&lt;/int&gt;
+        &lt;int name="群馬県立図書館"&gt;277&lt;/int&gt;
+        &lt;int name="千葉県立中央図書館"&gt;276&lt;/int&gt;
+        &lt;int name="三重県立図書館"&gt;274&lt;/int&gt;
+        &lt;int name="山口県立山口図書館"&gt;272&lt;/int&gt;
+      &lt;/lst&gt;
+    &lt;/facets&gt;
+  </extraResponseData>
+  <records>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;アーサー・ヘルプス『怱忙餘錄』中の一篇&amp;quot;Secrecy&amp;quot;の翻訳を巡って : 本田増次郎訳と夏目漱石訳&lt;/dc:title&gt;
+          &lt;dc:creator&gt;長谷川 勝政&lt;/dc:creator&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>1</recordPosition>
+    </record>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;嗚呼 中学国語教科書に夏目漱石と森鴎外の名前がない!&lt;/dc:title&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>2</recordPosition>
+    </record>
+    <record>
+      <recordSchema>info:srw/schema/1/dc-v1.1</recordSchema>
+      <recordPacking>string</recordPacking>
+      <recordData>
+      &lt;srw_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:srw/schema/1/dc-v1.1 http://www.loc.gov/standards/sru/dc-schema.xsd"&gt;
+          &lt;dc:title&gt;アートな時間 : 舞台 文学座「昭和虞美人草」 夏目漱石の小説を翻案 ロックとつづる青春群像&lt;/dc:title&gt;
+          &lt;dc:creator&gt;濱田 元子&lt;/dc:creator&gt;
+          &lt;dc:language&gt;jpn&lt;/dc:language&gt;
+      &lt;/srw_dc:dc&gt;
+    </recordData>
+      <recordPosition>3</recordPosition>
+    </record>
+  </records>
+</searchRetrieveResponse>
