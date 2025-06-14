@@ -257,18 +257,20 @@ function analyzeSRUDiagnostics(
  * Execute SRU search retrieve request (internal function)
  *
  * @param params - SRU search retrieve parameters
+ * @param includeRawXML - Whether to include raw XML in response
  * @returns Promise resolving to parsed SRU response
  */
 async function executeSearchRetrieve(
   params: SRUSearchRetrieveRequest,
+  includeRawXML?: boolean,
 ): Promise<Result<SRUSearchResponse, NDLError>> {
-  const rawResult = await executeSearchRetrieveRaw(params);
+  const rawResult = await executeSearchRetrieveRaw(params, includeRawXML);
   
   if (rawResult.isErr()) {
     return err(rawResult.error);
   }
 
-  const response = rawResult.value;
+  const { response, rawXML } = rawResult.value;
 
   if (response.type !== "searchRetrieve") {
     return err(
@@ -301,7 +303,7 @@ async function executeSearchRetrieve(
   const items = extractSRUSearchItems(response);
   const pagination = extractSRUPaginationInfo(response, params);
 
-  return ok({
+  const baseResponse = {
     items,
     pagination,
     query: {
@@ -309,6 +311,11 @@ async function executeSearchRetrieve(
       schema: params.recordSchema,
     },
     diagnostics: structuredDiagnostics,
+  };
+
+  return ok({
+    ...baseResponse,
+    ...(rawXML && { rawXML }),
   });
 }
 
@@ -320,7 +327,8 @@ async function executeSearchRetrieve(
  */
 export async function executeSearchRetrieveRaw(
   params: SRUSearchRetrieveRequest,
-): Promise<Result<ParsedSRUResponse, NDLError>> {
+  includeRawXML?: boolean,
+): Promise<Result<{ response: ParsedSRUResponse; rawXML?: string }, NDLError>> {
   // Validate input parameters
   const validationResult = safeParse(SRUSearchRetrieveRequestSchema, params);
   if (validationResult.isErr()) {
@@ -377,7 +385,16 @@ export async function executeSearchRetrieveRaw(
     }
 
     const xmlData = await response.text();
-    return parseSRUResponse(xmlData);
+    const parseResult = parseSRUResponse(xmlData);
+    
+    if (parseResult.isErr()) {
+      return err(parseResult.error);
+    }
+    
+    return ok({
+      response: parseResult.value,
+      ...(includeRawXML && { rawXML: xmlData }),
+    });
   } catch (error) {
     if (error instanceof TypeError && error.message.includes("fetch")) {
       return err(networkError(
@@ -561,9 +578,62 @@ export interface SRUPaginationInfo {
 }
 
 /**
- * High-level SRU search response
+ * SRU search options interface
  */
-export interface SRUSearchResponse {
+export interface SRUSearchOptions {
+  /**
+   * Maximum number of records to return (default: 10)
+   */
+  maximumRecords?: number;
+  /**
+   * Starting record position (default: 1)
+   */
+  startRecord?: number;
+  /**
+   * Record schema (default: "dcndl")
+   */
+  recordSchema?: SRURecordSchemaType;
+  /**
+   * SRU version (default: "1.2")
+   */
+  version?: SRUVersion;
+  /**
+   * Sort results by field
+   */
+  sortBy?: {
+    field: "title" | "date" | "creator";
+    order?: "asc" | "desc";
+  };
+  /**
+   * Filter results after fetching
+   */
+  filter?: {
+    /**
+     * Filter by language
+     */
+    language?: string | string[];
+    /**
+     * Filter by date range (year)
+     */
+    dateRange?: {
+      from?: string;
+      to?: string;
+    };
+    /**
+     * Filter by creator (partial match)
+     */
+    creator?: string;
+  };
+  /**
+   * Include raw XML response from NDL API
+   */
+  includeRawXML?: boolean;
+}
+
+/**
+ * Base SRU search response interface
+ */
+interface BaseSRUSearchResponse {
   /**
    * Search result items
    */
@@ -598,6 +668,17 @@ export interface SRUSearchResponse {
     details?: string;
   }>;
 }
+
+/**
+ * High-level SRU search response with optional rawXML field
+ */
+export interface SRUSearchResponse extends BaseSRUSearchResponse {
+  /**
+   * Raw XML response from NDL API (only included when includeRawXML option is true)
+   */
+  rawXML?: string;
+}
+
 
 /**
  * Extract search items from SRU response
@@ -824,51 +905,7 @@ export function extractSRUPaginationInfo(
  */
 export async function searchSRU(
   searchParams: SimpleSearchParams,
-  options?: {
-    /**
-     * Maximum number of records to return (default: 10)
-     */
-    maximumRecords?: number;
-    /**
-     * Starting record position (default: 1)
-     */
-    startRecord?: number;
-    /**
-     * Record schema (default: "dcndl")
-     */
-    recordSchema?: SRURecordSchemaType;
-    /**
-     * SRU version (default: "1.2")
-     */
-    version?: SRUVersion;
-    /**
-     * Sort results by field
-     */
-    sortBy?: {
-      field: "title" | "date" | "creator";
-      order?: "asc" | "desc";
-    };
-    /**
-     * Filter results after fetching
-     */
-    filter?: {
-      /**
-       * Filter by language
-       */
-      language?: string | string[];
-      /**
-       * Filter by date range (year)
-       */
-      dateRange?: {
-        from?: string;
-        to?: string;
-      };
-      /**
-       * Filter by creator (partial match)
-       */
-      creator?: string;
-    };
-  },
+  options?: SRUSearchOptions,
 ): Promise<Result<SRUSearchResponse, NDLError>> {
   // Build CQL query from simple parameters
   const cqlResult = buildSimpleCQLQuery(searchParams);
@@ -910,7 +947,7 @@ export async function searchSRU(
     version: options?.version || "1.2",
   };
 
-  const result = await searchSRUWithCQL(sruParams);
+  const result = await executeSearchRetrieve(sruParams, options?.includeRawXML);
   
   if (result.isErr()) {
     return err(result.error);
@@ -987,29 +1024,3 @@ export async function searchSRU(
   });
 }
 
-/**
- * Low-level SRU search function with raw CQL query
- *
- * @param params - Raw SRU search parameters with CQL query
- * @returns Promise resolving to structured search response
- *
- * @example
- * ```typescript
- * const result = await searchSRUWithCQL({
- *   operation: "searchRetrieve",
- *   query: 'title="夏目漱石" AND creator="作家"',
- *   maximumRecords: 20,
- *   startRecord: 1,
- * });
- *
- * if (result.isOk()) {
- *   const { items, pagination } = result.value;
- *   console.log(`Found ${pagination.totalResults} results`);
- * }
- * ```
- */
-export async function searchSRUWithCQL(
-  params: SRUSearchRetrieveRequest,
-): Promise<Result<SRUSearchResponse, NDLError>> {
-  return await executeSearchRetrieve(params);
-}

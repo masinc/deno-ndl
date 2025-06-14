@@ -1,11 +1,11 @@
 /**
- * SRU高度なCQLクエリの例 - 高レベルAPIと低レベルAPIの比較
+ * SRU高度な検索の例 - 複雑な検索条件の組み合わせ
  *
  * 実行方法:
  * deno run --allow-net examples/sru/advanced_cql.ts
  */
 
-import { searchSRU, searchSRUWithCQL, type SRUSearchItem } from "../../mod.ts";
+import { searchSRU, type SRUSearchItem } from "../../mod.ts";
 
 async function demonstrateHighLevelAPI() {
   console.log("=== 高レベルAPI: シンプルなパラメータで検索 ===");

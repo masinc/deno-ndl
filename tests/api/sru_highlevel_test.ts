@@ -1,5 +1,5 @@
 import { assertEquals, assertExists } from "@std/assert";
-import { searchSRU, searchSRUWithCQL } from "../../src/api/sru.ts";
+import { searchSRU } from "../../src/api/sru.ts";
 import { buildSimpleCQLQuery } from "../../src/utils/cql-builder.ts";
 import type { SimpleSearchParams } from "../../src/schemas/sru/mod.ts";
 
@@ -125,23 +125,6 @@ Deno.test("searchSRU - invalid ISBN format", async () => {
   }
 });
 
-Deno.test("searchSRUWithCQL - raw CQL query", async () => {
-  const result = await searchSRUWithCQL({
-    operation: "searchRetrieve",
-    query: 'title="夏目漱石"',
-    maximumRecords: 3,
-    startRecord: 1,
-  });
-
-  assertEquals(result.isOk(), true);
-  
-  if (result.isOk()) {
-    const response = result.value;
-    assertExists(response.items);
-    assertExists(response.pagination);
-    assertEquals(response.query.cql, 'title="夏目漱石"');
-  }
-});
 
 Deno.test("searchSRU - pagination options", async () => {
   const params: SimpleSearchParams = {

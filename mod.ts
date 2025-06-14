@@ -19,7 +19,6 @@ export {
   executeSearchRetrieveRaw,
   explainSRU,
   searchSRU,
-  searchSRUWithCQL,
   type SRUSearchItem,
   type SRUSearchResponse,
 } from "./src/api/sru.ts";

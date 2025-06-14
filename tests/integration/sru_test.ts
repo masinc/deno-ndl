@@ -13,7 +13,7 @@ import {
   explainSRU,
   parseSRUResponse,
   searchSRU,
-  searchSRUWithCQL,
+  executeSearchRetrieveRaw,
   type SRUSearchItem,
 } from "../../src/api/sru.ts";
 import { SRU } from "./fixtures/mod.ts";
@@ -187,7 +187,7 @@ Deno.test("searchSRUWithCQL handles fixture data correctly", () => {
  * エラーハンドリングテスト
  */
 Deno.test("SRU API handles invalid parameters", async () => {
-  const result = await searchSRUWithCQL({
+  const result = await executeSearchRetrieveRaw({
     operation: "searchRetrieve",
     query: "", // 無効な空クエリ
   });
@@ -217,7 +217,7 @@ Deno.test({
     for (const query of queries) {
       console.log(`\nTesting query: ${query}`);
 
-      const result = await searchSRUWithCQL({
+      const result = await executeSearchRetrieveRaw({
         operation: "searchRetrieve",
         query,
         maximumRecords: 2,
