@@ -9,7 +9,6 @@ import {
   NDLRecordFormatSchema,
   NonEmptyStringSchema,
   PaginationSchema,
-  PositiveIntegerSchema,
   ResponseFormatSchema,
   StartRecordSchema,
   URLSchema,
@@ -42,17 +41,6 @@ Deno.test("ISO8601DateSchema validates datetime strings", () => {
   // Invalid datetime
   assertThrows(() => ISO8601DateSchema.parse("2024-01-01"));
   assertThrows(() => ISO8601DateSchema.parse("invalid-date"));
-});
-
-Deno.test("PositiveIntegerSchema validates positive numbers", () => {
-  // Valid positive integers
-  assertEquals(PositiveIntegerSchema.parse(1), 1);
-  assertEquals(PositiveIntegerSchema.parse(100), 100);
-
-  // Invalid cases
-  assertThrows(() => PositiveIntegerSchema.parse(0));
-  assertThrows(() => PositiveIntegerSchema.parse(-1));
-  assertThrows(() => PositiveIntegerSchema.parse(1.5));
 });
 
 Deno.test("StartRecordSchema has default value", () => {

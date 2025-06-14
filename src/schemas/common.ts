@@ -33,11 +33,6 @@ export const DateRangeSchema = z.object({
 });
 
 /**
- * Positive integer schema
- */
-export const PositiveIntegerSchema = z.number().int().positive();
-
-/**
  * Non-negative integer schema (including 0)
  */
 export const NonNegativeIntegerSchema = z.number().int().min(0);
@@ -49,12 +44,13 @@ export const NonNegativeIntegerSchema = z.number().int().min(0);
 /**
  * Start record parameter (1-based indexing)
  */
-export const StartRecordSchema = PositiveIntegerSchema.default(1);
+export const StartRecordSchema = z.number().int().positive().default(1);
 
 /**
  * Maximum records parameter
  */
-export const MaximumRecordsSchema = PositiveIntegerSchema.max(500).default(10);
+export const MaximumRecordsSchema = z.number().int().positive().max(500)
+  .default(10);
 
 /**
  * Total records count

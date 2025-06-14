@@ -1,15 +1,17 @@
-name: CI
+name: Integration Tests
 
-"on":
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on:
   workflow_dispatch:
+    inputs:
+      verbose:
+        description: "Verbose output"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
-  test:
-    name: Test
+  integration-test:
+    name: Integration Test
     runs-on: ubuntu-latest
 
     steps:
@@ -29,14 +31,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deno-
 
-      - name: Type check
-        run: deno check **/*.ts
-
-      - name: Lint
-        run: deno task lint
-
-      - name: Format check
-        run: deno fmt --check
-
-      - name: Test
-        run: deno task test
+      - name: Run integration tests
+        run: deno task test:integration
+        env:
+          VERBOSE: ${{ github.event.inputs.verbose || 'false' }}
