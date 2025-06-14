@@ -1,7 +1,14 @@
 /**
- * SRUエラーハンドリングの例
+ * SRU APIエラーハンドリングの例
  *
- * 改善されたエラーハンドリング機能のデモンストレーション
+ * この例では以下のエラーハンドリングパターンを示します：
+ * - バリデーションエラー（無効なパラメータ）
+ * - SRU診断情報の処理
+ * - エラー型の判定と適切な対応
+ * - ユーザーフレンドリーなエラーメッセージの活用
+ *
+ * 注意: この例では実際のNDL APIを呼び出しますが、
+ * 安全なパラメータのみを使用し、レート制限に配慮しています。
  *
  * 実行方法:
  * deno run --allow-net examples/sru/error_handling.ts
@@ -101,58 +108,47 @@ if (result3.isErr()) {
   console.log(`バリデーションエラー?: ${isValidationError(error)}`);
 }
 
-// 例4: エラー処理のベストプラクティス
-console.log("\n=== 例4: エラー処理のベストプラクティス ===");
+// 例4: エラーメッセージのユーザーフレンドリー化
+console.log("\n=== 例4: エラーメッセージのユーザーフレンドリー化 ===");
 
-async function handleSearchWithRetry(
-  searchParams: Record<string, unknown>,
-  maxRetries: number = 3,
-): Promise<void> {
-  let retryCount = 0;
+// 無効なISBN形式での検索
+const result4 = await searchSRU({
+  isbn: "invalid-isbn-format", // 無効なISBN形式
+});
 
-  while (retryCount < maxRetries) {
-    const result = await searchSRU(searchParams);
-
-    if (result.isOk()) {
-      const { items, pagination } = result.value;
-      console.log(
-        `✓ 検索成功: ${pagination.totalResults}件中${items.length}件を表示`,
-      );
-      return;
-    }
-
-    const error = result.error;
-    console.log(
-      `試行 ${retryCount + 1}: ${formatUserFriendlyErrorMessage(error)}`,
-    );
-
-    // リトライすべきエラーかどうかを判定
-    if (
-      isRateLimitError(error) ||
-      (isAPIError(error) && typeof error.cause === "number" &&
-        error.cause >= 500)
-    ) {
-      retryCount++;
-      if (retryCount < maxRetries) {
-        const waitTime = Math.pow(2, retryCount) * 1000; // 指数バックオフ
-        console.log(`${waitTime / 1000}秒後に再試行します...`);
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
-      }
-    } else {
-      // リトライしない方が良いエラー
-      console.log("リトライを中止します。");
-      break;
-    }
-  }
-
-  if (retryCount >= maxRetries) {
-    console.log("最大試行回数に達しました。");
-  }
+if (result4.isErr()) {
+  const error = result4.error;
+  console.log(`エラータイプ: ${error.type}`);
+  console.log(`技術的メッセージ: ${error.message}`);
+  console.log(`ユーザー向けメッセージ: ${formatUserFriendlyErrorMessage(error)}`);
+} else {
+  console.log("エラーが発生するはずでした（無効なISBN）");
 }
 
-// 正常な検索でリトライ処理をテスト
-await handleSearchWithRetry({
-  creator: "夏目漱石",
-}, 2);
+// 例5: 複数の検索条件での複合エラー
+console.log("\n=== 例5: 複数の検索条件での複合エラー ===");
+
+const result5 = await searchSRU({
+  title: "", // 空文字列
+  creator: "", // 空文字列
+  dateRange: {
+    from: "2025", // 未来の日付
+    to: "2020", // from > to の無効な範囲
+  },
+} as Record<string, unknown>);
+
+if (result5.isErr()) {
+  const error = result5.error;
+  console.log(`エラータイプ: ${error.type}`);
+  console.log(`詳細: ${error.message}`);
+  console.log(`ユーザー向け: ${formatUserFriendlyErrorMessage(error)}`);
+
+  // エラー種類の詳細判定
+  if (isValidationError(error)) {
+    console.log("→ 入力パラメータの検証でエラーが発生しました");
+  } else if (isQuerySyntaxError(error)) {
+    console.log("→ CQLクエリの構文に問題があります");
+  }
+}
 
 console.log("\n✓ エラーハンドリングのデモンストレーション完了");

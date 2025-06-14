@@ -1,5 +1,10 @@
 /**
- * エラーハンドリングの例
+ * OpenSearch APIエラーハンドリングの例
+ *
+ * この例では以下のエラーハンドリングパターンを示します：
+ * - バリデーションエラー（無効なパラメータ）
+ * - エラー型の判定と適切な対応
+ * - ユーザーフレンドリーなエラーメッセージの表示
  *
  * 実行方法:
  * deno run --allow-net examples/opensearch/error_handling.ts
@@ -49,36 +54,46 @@ async function demonstrateErrorHandling() {
     console.log("✗ エラーが発生するはずでした");
   }
 
-  // 3. 大量リクエストによるレート制限エラーの可能性
-  console.log("\n3. 連続リクエストでのエラーハンドリング");
+  // 3. 無効なオプションパラメータ
+  console.log("\n3. 無効なオプションパラメータ");
   console.log("-".repeat(20));
 
-  const requests = Array.from(
-    { length: 3 },
-    (_, i) =>
-      searchOpenSearch(`test${i}`, {
-        count: 1,
-      }),
-  );
-
-  const results = await Promise.all(requests);
-
-  results.forEach((result, index) => {
-    if (result.isOk()) {
-      console.log(`  リクエスト ${index + 1}: ✓ 成功`);
-    } else {
-      const error = result.error;
-      console.log(`  リクエスト ${index + 1}: ✗ エラー - ${error.message}`);
-
-      if (isAPIError(error)) {
-        console.log("    → APIエラー（レート制限の可能性）");
-      } else if (isNetworkError(error)) {
-        console.log("    → ネットワークエラー");
-      } else if (isValidationError(error)) {
-        console.log("    → バリデーションエラー");
-      }
-    }
+  const invalidOptionsResult = await searchOpenSearch("文学", {
+    count: 500, // 最大値を超えた値
   });
+
+  if (invalidOptionsResult.isErr()) {
+    const error = invalidOptionsResult.error;
+    console.log(`✓ 期待されたエラー: ${error.message}`);
+
+    if (isValidationError(error)) {
+      console.log("  → パラメータバリデーションエラーとして正しく検出されました");
+    }
+  } else {
+    console.log("✗ エラーが発生するはずでした（最大値超過）");
+  }
+
+  // 4. エラー型の判定例
+  console.log("\n4. エラー型の判定例");
+  console.log("-".repeat(20));
+
+  const errorResult = await searchOpenSearch(""); // 空文字列
+
+  if (errorResult.isErr()) {
+    const error = errorResult.error;
+    console.log(`エラーメッセージ: ${error.message}`);
+
+    // エラー型に応じた対応例
+    if (isValidationError(error)) {
+      console.log("  → バリデーションエラー: 入力パラメータを確認してください");
+    } else if (isAPIError(error)) {
+      console.log(`  → APIエラー: サーバー側の問題の可能性があります`);
+    } else if (isNetworkError(error)) {
+      console.log("  → ネットワークエラー: 接続状況を確認してください");
+    } else {
+      console.log("  → その他のエラー: 予期しない問題が発生しました");
+    }
+  }
 
   console.log("\n✓ エラーハンドリングのデモンストレーション完了");
 }
