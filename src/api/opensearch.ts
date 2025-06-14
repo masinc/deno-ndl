@@ -490,33 +490,56 @@ export interface OpenSearchSearchResponse extends BaseOpenSearchResponse {
 }
 
 /**
- * High-level OpenSearch search function with options
+ * Search NDL (National Diet Library) using OpenSearch API
  *
- * @param query - Search query string
- * @param options - Optional OpenSearch request options
- * @returns Promise resolving to structured search response
+ * This function provides a high-level interface to search bibliographic records
+ * using the National Diet Library's OpenSearch API. It supports both RSS and Atom
+ * formats, client-side sorting and filtering, and returns structured results with
+ * pagination information.
  *
- * @example
+ * @param query - Search query string (e.g., "夏目漱石", "吾輩は猫である")
+ * @param options - Optional search configuration
+ * @param options.count - Maximum number of records to return (default: 10, max: 200)
+ * @param options.start - Starting index for pagination (0-based, default: 0)
+ * @param options.format - Output format ("rss" or "atom", default: "rss")
+ * @param options.hl - Language preference ("ja" or "en")
+ * @param options.sortBy - Client-side sorting configuration
+ * @param options.filter - Client-side filtering options
+ * @param options.includeRawXML - Include raw XML response in result
+ * @returns Promise resolving to Result containing search response or error
+ *
+ * @example Basic search
  * ```typescript
- * // Simple search
- * const result = await searchOpenSearch("夏目漱石", {
- *   count: 20,
- *   format: "rss",
- *   sortBy: { field: "date", order: "desc" }
- * });
+ * import { searchOpenSearch } from "@masinc/ndl";
+ *
+ * const result = await searchOpenSearch("夏目漱石", { count: 10 });
  *
  * if (result.isOk()) {
  *   const { items, pagination } = result.value;
  *   console.log(`Found ${pagination.totalResults} results`);
- *   console.log(`Page ${pagination.currentPage} of ${pagination.totalPages}`);
  *
  *   items.forEach(item => {
- *     console.log(`- ${item.title} by ${item.authors?.join(", ")}`);
+ *     console.log(`${item.title} by ${item.authors?.join(", ")}`);
  *   });
  * } else {
  *   console.error("Search failed:", result.error.message);
  * }
  * ```
+ *
+ * @example Advanced search with filtering and sorting
+ * ```typescript
+ * const result = await searchOpenSearch("文学", {
+ *   count: 20,
+ *   format: "rss",
+ *   sortBy: { field: "date", order: "desc" },
+ *   filter: {
+ *     creator: "夏目",
+ *     dateRange: { from: "2000", to: "2023" }
+ *   }
+ * });
+ * ```
+ *
+ * @see {@link https://ndlsearch.ndl.go.jp/help/api/specifications | NDL Search API Specifications}
  */
 export async function searchOpenSearch(
   query: string,
