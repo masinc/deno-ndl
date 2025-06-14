@@ -42,12 +42,12 @@
  *
  * @example サムネイル画像取得
  * ```typescript
- * import { fetchThumbnail, saveThumbnailToFile } from "@masinc/ndl";
+ * import { fetchThumbnail } from "@masinc/ndl";
  *
  * const result = await fetchThumbnail({ id: "9784422311074" });
  * if (result.isOk()) {
  *   console.log(`取得: ${result.value.id}`);
- *   await saveThumbnailToFile(result.value, "thumbnail.jpg");
+ *   console.log(`画像データサイズ: ${result.value.imageData.length} bytes`);
  * }
  * ```
  *
@@ -73,11 +73,7 @@
 // Core API functions
 export { searchOpenSearch } from "./src/api/opensearch.ts";
 export { searchSRU } from "./src/api/sru.ts";
-export {
-  fetchThumbnail,
-  saveThumbnailToFile,
-  thumbnailExists,
-} from "./src/api/thumbnail.ts";
+export { fetchThumbnail, thumbnailExists } from "./src/api/thumbnail.ts";
 
 // Response types
 export type { OpenSearchSearchResponse } from "./src/api/opensearch.ts";

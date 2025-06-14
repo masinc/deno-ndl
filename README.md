@@ -83,7 +83,7 @@ if (result.isOk()) {
 ### Thumbnail API
 
 ```typescript
-import { fetchThumbnail, saveThumbnailToFile } from "@masinc/ndl";
+import { fetchThumbnail } from "@masinc/ndl";
 
 // サムネイル取得
 const result = await fetchThumbnail({ id: "9784422311074" });
@@ -91,9 +91,7 @@ const result = await fetchThumbnail({ id: "9784422311074" });
 if (result.isOk()) {
   const thumbnail = result.value;
   console.log(`取得: ${thumbnail.id}, サイズ: ${thumbnail.metadata.size}`);
-
-  // ファイルに保存
-  await saveThumbnailToFile(thumbnail, "thumbnail.jpg");
+  console.log(`画像データ: ${thumbnail.imageData.length} bytes`);
 } else {
   console.error("取得失敗:", result.error.message);
 }
