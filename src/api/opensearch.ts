@@ -60,7 +60,7 @@ export async function searchOpenSearchRaw(
       q: validatedParams.q,
       count: validatedParams.count?.toString(),
       start: validatedParams.start?.toString(),
-      format: validatedParams.format,
+      format: validatedParams.format as string,
       hl: validatedParams.hl,
     });
 
@@ -390,7 +390,7 @@ export async function searchOpenSearch(
     },
     query: {
       q: params.q,
-      format: params.format,
+      format: params.format as string | undefined,
     },
   });
 }

@@ -1,5 +1,5 @@
 import { assertEquals, assertGreater } from "@std/assert";
-import { parseOpenSearchResponse, searchOpenSearch } from "../../src/api/opensearch.ts";
+import { parseOpenSearchResponse } from "../../src/api/opensearch.ts";
 import { OPENSEARCH } from "./fixtures/mod.ts";
 
 /**
