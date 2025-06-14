@@ -55,8 +55,8 @@ const result = await searchSRU("夏目漱石", { count: 10 });
 if (result.isOk()) {
   const { items, pagination } = result.value;
   console.log(`見つかった件数: ${pagination.totalResults}`);
-  
-  items.forEach(item => {
+
+  items.forEach((item) => {
     console.log(`${item.title} by ${item.authors?.join(", ")}`);
   });
 } else {
@@ -72,7 +72,7 @@ import { searchOpenSearch } from "@masinc/ndl";
 const result = await searchOpenSearch("芥川龍之介", { count: 5 });
 
 if (result.isOk()) {
-  result.value.items.forEach(item => {
+  result.value.items.forEach((item) => {
     console.log(`${item.title}`);
   });
 } else {
@@ -85,13 +85,13 @@ if (result.isOk()) {
 このライブラリは[neverthrow](https://github.com/supermacro/neverthrow)を使用した関数型エラーハンドリングを採用しています。
 
 ```typescript
-import { searchSRU, isAPIError, isNetworkError } from "@masinc/ndl";
+import { isAPIError, isNetworkError, searchSRU } from "@masinc/ndl";
 
 const result = await searchSRU("検索語", { count: 10 });
 
 if (result.isErr()) {
   const error = result.error;
-  
+
   if (isAPIError(error)) {
     console.error(`APIエラー (${error.statusCode}): ${error.message}`);
   } else if (isNetworkError(error)) {

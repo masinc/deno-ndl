@@ -934,7 +934,7 @@ export function extractSRUPaginationInfo(
  *   const { items, pagination, query } = result.value;
  *   console.log(`Generated CQL: ${query.cql}`);
  *   console.log(`Found ${pagination.totalResults} results`);
- *   
+ *
  *   items.forEach(item => {
  *     console.log(`${item.title} by ${item.creators?.join(", ")}`);
  *   });

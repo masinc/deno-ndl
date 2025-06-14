@@ -517,7 +517,7 @@ export interface OpenSearchSearchResponse extends BaseOpenSearchResponse {
  * if (result.isOk()) {
  *   const { items, pagination } = result.value;
  *   console.log(`Found ${pagination.totalResults} results`);
- *   
+ *
  *   items.forEach(item => {
  *     console.log(`${item.title} by ${item.authors?.join(", ")}`);
  *   });

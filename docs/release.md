@@ -101,21 +101,27 @@ git diff deno.jsonc
 ## [0.0.202506141530] - 2025-06-14
 
 ### Added
+
 - 新機能の説明
 
 ### Changed
+
 - 変更された機能の説明
 
 ### Fixed
+
 - 修正されたバグの説明
 
 ### Deprecated
+
 - 非推奨になった機能
 
 ### Removed
+
 - 削除された機能
 
 ### Security
+
 - セキュリティ関連の修正
 ```
 
@@ -293,6 +299,7 @@ gh release delete v0.0.4
 ## チェックリスト
 
 ### リリース前
+
 - [ ] 全テストがパス (`deno task check`)
 - [ ] 統合テストがパス (`deno task test:integration`)
 - [ ] CHANGELOG.mdが更新済み
@@ -301,12 +308,14 @@ gh release delete v0.0.4
 - [ ] GitHub Actions ワークフローが最新状態
 
 ### リリース中
+
 - [ ] リリースコミットが作成済み
 - [ ] タグが作成・プッシュ済み
 - [ ] GitHub Actions が正常実行
 - [ ] GitHub Releaseが作成済み
 
 ### リリース後
+
 - [ ] GitHub Actions の成功確認
 - [ ] JSRでの公開が確認済み
 - [ ] GitHub Releaseページが正常表示
