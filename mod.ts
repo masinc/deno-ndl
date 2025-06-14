@@ -4,29 +4,25 @@
  * @module
  */
 
-// OpenSearch API
+// Core API functions
+export { searchOpenSearch } from "./src/api/opensearch.ts";
+export { searchSRU } from "./src/api/sru.ts";
 export {
-  type OpenSearchItem,
-  type OpenSearchOptions,
-  type OpenSearchPaginationInfo,
-  type OpenSearchSearchResponse,
-  searchOpenSearch,
-} from "./src/api/opensearch.ts";
+  fetchThumbnail,
+  saveThumbnailToFile,
+  thumbnailExists,
+} from "./src/api/thumbnail.ts";
 
-// OpenSearch request types
+// Response types
+export type { OpenSearchSearchResponse } from "./src/api/opensearch.ts";
+export type { SRUSearchItem, SRUSearchResponse } from "./src/api/sru.ts";
+export type { ThumbnailResponse } from "./src/schemas/thumbnail/mod.ts";
+
+// Request types
 export type { OpenSearchRequest } from "./src/schemas/opensearch/mod.ts";
-
-// SRU API
-export {
-  searchSRU,
-  type SRUSearchItem,
-  type SRUSearchOptions,
-  type SRUSearchResponse,
-} from "./src/api/sru.ts";
-
-// SRU request types
 export type { SimpleSearchParams } from "./src/schemas/sru/mod.ts";
+export type { ThumbnailRequest } from "./src/schemas/thumbnail/mod.ts";
 
-// Error types
+// Error handling
 export type { NDLError } from "./src/errors.ts";
 export { isAPIError, isNetworkError, isValidationError } from "./src/errors.ts";
