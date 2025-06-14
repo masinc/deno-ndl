@@ -38,7 +38,7 @@ deno add jsr:@masinc/ndl
 ```json
 {
   "imports": {
-    "@masinc/ndl": "jsr:@masinc/ndl@^0.1.202506150741"
+    "@masinc/ndl": "jsr:@masinc/ndl@^0.1.202506150757"
   }
 }
 ```
