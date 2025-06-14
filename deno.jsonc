@@ -1,6 +1,6 @@
 {
-  "name": "deno-ndl",
-  "version": "0.1.0",
+  "name": "@masinc/ndl",
+  "version": "0.0.1",
   "exports": "./mod.ts",
   "tasks": {
     "dev": "deno test --watch"
