@@ -67,7 +67,46 @@ export const OpenSearchUrlTemplateSchema = z.object({
 /**
  * Type exports
  */
+
+/**
+ * OpenSearch検索クエリ文字列
+ *
+ * OpenSearch APIで使用する検索キーワードやフレーズを表す型です。
+ * 空文字列は許可されず、最低1文字以上の文字列である必要があります。
+ */
 export type OpenSearchQuery = z.infer<typeof OpenSearchQuerySchema>;
+
+/**
+ * OpenSearch検索結果数
+ *
+ * 1回のAPIリクエストで取得する検索結果の件数を指定する型です。
+ * 1から500の範囲で指定可能で、デフォルトは20件です。
+ */
 export type OpenSearchCount = z.infer<typeof OpenSearchCountSchema>;
+
+/**
+ * OpenSearch APIリクエストパラメータ
+ *
+ * NDL OpenSearch APIに送信するリクエストの全パラメータを定義する型です。
+ * 検索クエリ、結果数、開始位置、出力形式、言語設定などを含みます。
+ *
+ * @example
+ * ```typescript
+ * const request: OpenSearchRequest = {
+ *   q: "夏目漱石",
+ *   count: 10,
+ *   start: 0,
+ *   format: "rss",
+ *   hl: "ja"
+ * };
+ * ```
+ */
 export type OpenSearchRequest = z.infer<typeof OpenSearchRequestSchema>;
+
+/**
+ * OpenSearch URLテンプレート
+ *
+ * OpenSearch Description DocumentのURL要素で使用されるテンプレート形式を定義する型です。
+ * 検索パラメータの動的な置換をサポートします。
+ */
 export type OpenSearchUrlTemplate = z.infer<typeof OpenSearchUrlTemplateSchema>;
