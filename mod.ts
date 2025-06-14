@@ -16,19 +16,15 @@ export type { OpenSearchRequest } from "./src/schemas/opensearch/mod.ts";
 
 // SRU API
 export {
-  executeSearchRetrieveRaw,
-  explainSRU,
   searchSRU,
   type SRUSearchItem,
   type SRUSearchResponse,
+  type SRUSearchOptions,
 } from "./src/api/sru.ts";
 
 // SRU request types
 export type {
-  CQLQuery,
   SimpleSearchParams,
-  SRUExplainRequest,
-  SRUSearchRetrieveRequest,
 } from "./src/schemas/sru/mod.ts";
 
 // Error types
