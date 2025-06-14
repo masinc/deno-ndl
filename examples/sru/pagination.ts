@@ -1,89 +1,129 @@
 /**
- * SRUページネーション検索の例
+ * SRUページネーション機能の例
  *
+ * 新しいページネーション機能を使用した検索例
+ * 
  * 実行方法:
  * deno run --allow-net examples/sru/pagination.ts
  */
 
 import { searchSRU, type SRUSearchItem } from "../../mod.ts";
 
-async function searchWithPagination(cqlQuery: string, pageSize: number = 5) {
-  console.log(`CQLクエリ: ${cqlQuery}`);
-  console.log("=".repeat(60));
+console.log("SRUページネーション機能の例");
+console.log("=".repeat(50));
 
-  // 最初のページを取得
-  const firstResult = await searchSRU({
-    operation: "searchRetrieve",
-    query: cqlQuery,
-    maximumRecords: pageSize,
-    startRecord: 1,
-  });
+// 例1: 基本的なページネーション
+console.log("\n=== 例1: 基本的なページネーション ===");
+const result1 = await searchSRU({
+  creator: "夏目漱石",
+}, {
+  maximumRecords: 3,
+  startRecord: 1,
+});
 
-  if (firstResult.isErr()) {
-    console.error("検索エラー:", firstResult.error.message);
-    return;
-  }
-
-  const totalPages = firstResult.value.pagination.totalPages;
-  console.log(`総件数: ${firstResult.value.pagination.totalResults}件`);
-  console.log(`総ページ数: ${totalPages}ページ`);
+if (result1.isOk()) {
+  const { items, pagination } = result1.value;
+  
+  console.log(`検索結果: ${pagination.totalResults}件`);
+  console.log(`現在のページ: ${pagination.currentPage} / ${pagination.totalPages}`);
+  console.log(`表示件数: ${items.length}件`);
+  console.log(`開始位置: ${pagination.startIndex}`);
   console.log("");
-
-  // 最初の3ページを表示
-  const maxPages = Math.min(3, totalPages);
-
-  for (let page = 1; page <= maxPages; page++) {
-    const startRecord = (page - 1) * pageSize + 1;
-
-    const result = await searchSRU({
-      operation: "searchRetrieve",
-      query: cqlQuery,
-      maximumRecords: pageSize,
-      startRecord,
+  
+  // ページネーション情報
+  console.log("ページネーション情報:");
+  console.log(`- 前のページあり: ${pagination.hasPreviousPage}`);
+  console.log(`- 次のページあり: ${pagination.hasNextPage}`);
+  
+  if (pagination.nextPageParams) {
+    console.log(`- 次のページ: startRecord=${pagination.nextPageParams.startRecord}`);
+  }
+  
+  if (pagination.previousPageParams) {
+    console.log(`- 前のページ: startRecord=${pagination.previousPageParams.startRecord}`);
+  }
+  
+  console.log("\n検索結果:");
+  items.forEach((item: SRUSearchItem, index: number) => {
+    console.log(`${pagination.startIndex + index}. ${item.title}`);
+  });
+  
+  // 次のページを取得する例
+  if (pagination.hasNextPage && pagination.nextPageParams) {
+    console.log("\n--- 次のページを取得中 ---");
+    
+    const nextResult = await searchSRU({
+      creator: "夏目漱石",
+    }, {
+      maximumRecords: pagination.nextPageParams.maximumRecords,
+      startRecord: pagination.nextPageParams.startRecord,
     });
-
-    if (result.isErr()) {
-      console.error(`ページ ${page} の取得エラー:`, result.error.message);
-      continue;
-    }
-
-    const { items, pagination } = result.value;
-
-    console.log(`--- ページ ${pagination.currentPage} ---`);
-    items.forEach((item: SRUSearchItem, index: number) => {
-      const itemNumber = startRecord + index;
-      console.log(`${itemNumber}. ${item.title}`);
-      if (item.creators && item.creators.length > 0) {
-        console.log(`    著者: ${item.creators.join(", ")}`);
-      }
-      if (item.identifier) {
-        console.log(`    ID: ${item.identifier}`);
-      }
-    });
-    console.log("");
-
-    // API制限を避けるため少し待機
-    if (page < maxPages) {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    
+    if (nextResult.isOk()) {
+      const nextPage = nextResult.value;
+      console.log(`次のページ (${nextPage.pagination.currentPage}/${nextPage.pagination.totalPages}):`);
+      
+      nextPage.items.forEach((item: SRUSearchItem, index: number) => {
+        console.log(`${nextPage.pagination.startIndex + index}. ${item.title}`);
+      });
     }
   }
-
-  if (totalPages > 3) {
-    console.log(`... 他 ${totalPages - 3} ページあります`);
-  }
-
-  // 次のレコード位置の情報があれば表示
-  if (firstResult.value.pagination.nextRecordPosition) {
-    console.log(
-      `次のレコード位置: ${firstResult.value.pagination.nextRecordPosition}`,
-    );
-  }
-
-  // 結果セットIDがあれば表示
-  if (firstResult.value.pagination.resultSetId) {
-    console.log(`結果セットID: ${firstResult.value.pagination.resultSetId}`);
-  }
+} else {
+  console.error("検索エラー:", result1.error.message);
 }
 
-// 宮沢賢治の作品を検索
-await searchWithPagination('creator="宮沢賢治"', 3);
+// 例2: フィルタリングとページネーション
+console.log("\n\n=== 例2: フィルタリングとページネーション ===");
+const result2 = await searchSRU({
+  title: "文学",
+}, {
+  maximumRecords: 5,
+  startRecord: 1,
+  filter: {
+    language: "jpn",
+    dateRange: {
+      from: "2000",
+      to: "2024",
+    },
+  },
+  sortBy: {
+    field: "date",
+    order: "desc",
+  },
+});
+
+if (result2.isOk()) {
+  const { items, pagination } = result2.value;
+  
+  console.log(`フィルタリング・ソート後: ${items.length}件を表示`);
+  console.log(`総検索結果: ${pagination.totalResults}件`);
+  console.log(`現在のページ: ${pagination.currentPage} / ${pagination.totalPages}`);
+  console.log("");
+  
+  items.forEach((item: SRUSearchItem, index: number) => {
+    console.log(`${index + 1}. ${item.title}`);
+    if (item.date) {
+      console.log(`   日付: ${item.date}`);
+    }
+    if (item.language) {
+      console.log(`   言語: ${item.language}`);
+    }
+    console.log("");
+  });
+  
+  // ページ遷移の例
+  console.log("ページ遷移の例:");
+  console.log(`- 現在: ページ ${pagination.currentPage}`);
+  
+  if (pagination.hasPreviousPage) {
+    console.log(`- 前のページへ: startRecord=${pagination.previousPageParams?.startRecord}`);
+  }
+  
+  if (pagination.hasNextPage) {
+    console.log(`- 次のページへ: startRecord=${pagination.nextPageParams?.startRecord}`);
+  }
+} else {
+  console.error("検索エラー:", result2.error.message);
+}
+
+console.log("\n✓ ページネーション機能のデモンストレーション完了");

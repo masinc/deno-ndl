@@ -421,6 +421,32 @@ export interface SRUPaginationInfo {
    * Result set identifier for future requests
    */
   resultSetId?: string;
+
+  /**
+   * Whether there is a previous page
+   */
+  hasPreviousPage: boolean;
+
+  /**
+   * Whether there is a next page
+   */
+  hasNextPage: boolean;
+
+  /**
+   * Parameters for the next page
+   */
+  nextPageParams?: {
+    startRecord: number;
+    maximumRecords: number;
+  };
+
+  /**
+   * Parameters for the previous page
+   */
+  previousPageParams?: {
+    startRecord: number;
+    maximumRecords: number;
+  };
 }
 
 /**
@@ -624,6 +650,19 @@ export function extractSRUPaginationInfo(
   const currentPage = Math.floor((startIndex - 1) / itemsPerPage) + 1;
   const totalPages = Math.ceil(totalResults / itemsPerPage);
 
+  const hasPreviousPage = currentPage > 1;
+  const hasNextPage = currentPage < totalPages;
+
+  const nextPageParams = hasNextPage ? {
+    startRecord: startIndex + itemsPerPage,
+    maximumRecords: itemsPerPage,
+  } : undefined;
+
+  const previousPageParams = hasPreviousPage ? {
+    startRecord: Math.max(1, startIndex - itemsPerPage),
+    maximumRecords: itemsPerPage,
+  } : undefined;
+
   return {
     totalResults,
     currentPage,
@@ -632,6 +671,10 @@ export function extractSRUPaginationInfo(
     startIndex,
     nextRecordPosition: response.response.nextRecordPosition,
     resultSetId: response.response.resultSetId,
+    hasPreviousPage,
+    hasNextPage,
+    nextPageParams,
+    previousPageParams,
   };
 }
 
@@ -683,6 +726,33 @@ export async function searchSRU(
      * SRU version (default: "1.2")
      */
     version?: SRUVersion;
+    /**
+     * Sort results by field
+     */
+    sortBy?: {
+      field: "title" | "date" | "creator";
+      order?: "asc" | "desc";
+    };
+    /**
+     * Filter results after fetching
+     */
+    filter?: {
+      /**
+       * Filter by language
+       */
+      language?: string | string[];
+      /**
+       * Filter by date range (year)
+       */
+      dateRange?: {
+        from?: string;
+        to?: string;
+      };
+      /**
+       * Filter by creator (partial match)
+       */
+      creator?: string;
+    };
   },
 ): Promise<Result<SRUSearchResponse, NDLError>> {
   // Build CQL query from simple parameters
@@ -703,6 +773,10 @@ export async function searchSRU(
         totalPages: 0,
         itemsPerPage: options?.maximumRecords || 10,
         startIndex: options?.startRecord || 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+        nextPageParams: undefined,
+        previousPageParams: undefined,
       },
       query: {
         cql: "",
@@ -721,7 +795,81 @@ export async function searchSRU(
     version: options?.version || "1.2",
   };
 
-  return await searchSRUWithCQL(sruParams);
+  const result = await searchSRUWithCQL(sruParams);
+  
+  if (result.isErr()) {
+    return err(result.error);
+  }
+  
+  let { items } = result.value;
+  
+  // Apply client-side filtering
+  if (options?.filter) {
+    if (options.filter.language) {
+      const languages = Array.isArray(options.filter.language) 
+        ? options.filter.language 
+        : [options.filter.language];
+      items = items.filter(item => 
+        item.language && languages.includes(item.language)
+      );
+    }
+    
+    if (options.filter.dateRange) {
+      const { from, to } = options.filter.dateRange;
+      items = items.filter(item => {
+        if (!item.date) return true;
+        const year = item.date.match(/(\d{4})/)?.[1];
+        if (!year) return true;
+        if (from && year < from) return false;
+        if (to && year > to) return false;
+        return true;
+      });
+    }
+    
+    if (options.filter.creator) {
+      items = items.filter(item =>
+        item.creators?.some(creator =>
+          creator.toLowerCase().includes(options.filter!.creator!.toLowerCase())
+        )
+      );
+    }
+  }
+  
+  // Apply client-side sorting
+  if (options?.sortBy) {
+    const { field, order = "asc" } = options.sortBy;
+    
+    items = [...items].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (field) {
+        case "title": {
+          comparison = a.title.localeCompare(b.title, "ja", { numeric: true });
+          break;
+        }
+        case "creator": {
+          const aCreator = a.creators?.[0] || "";
+          const bCreator = b.creators?.[0] || "";
+          comparison = aCreator.localeCompare(bCreator, "ja", { numeric: true });
+          break;
+        }
+        case "date": {
+          const aYear = a.date?.match(/(\d{4})/)?.[1] || "0000";
+          const bYear = b.date?.match(/(\d{4})/)?.[1] || "0000";
+          comparison = aYear.localeCompare(bYear);
+          break;
+        }
+      }
+      
+      return order === "desc" ? -comparison : comparison;
+    });
+  }
+  
+  // Return modified response
+  return ok({
+    ...result.value,
+    items,
+  });
 }
 
 /**
