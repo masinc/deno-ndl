@@ -6,9 +6,11 @@
 
 // OpenSearch API
 export {
-  type SearchItem,
+  type OpenSearchItem,
+  type OpenSearchOptions,
+  type OpenSearchPaginationInfo,
+  type OpenSearchSearchResponse,
   searchOpenSearch,
-  type SearchResponse,
 } from "./src/api/opensearch.ts";
 
 // OpenSearch request types

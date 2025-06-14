@@ -59,7 +59,7 @@ deno run --allow-net examples/opensearch/basic_search.ts
 
 ```typescript
 {
-  items: SearchItem[],      // 検索結果
+  items: OpenSearchItem[],      // 検索結果
   pagination: {             // ページネーション情報
     totalResults: number,   // 総件数
     currentPage: number,    // 現在のページ
@@ -74,7 +74,7 @@ deno run --allow-net examples/opensearch/basic_search.ts
 }
 ```
 
-各検索結果 (`SearchItem`) には以下の情報が含まれます：
+各検索結果 (`OpenSearchItem`) には以下の情報が含まれます：
 
 ```typescript
 {

@@ -66,10 +66,10 @@ export async function searchOpenSearchRaw(
   try {
     // Build API URL with query parameters
     // NDL APIのstartパラメータは1-basedなので変換
-    const apiStart = validatedParams.start !== undefined 
+    const apiStart = validatedParams.start !== undefined
       ? (validatedParams.start + 1).toString()
       : undefined;
-    
+
     const url = buildURL(OPENSEARCH_API_BASE, {
       q: validatedParams.q,
       count: validatedParams.count?.toString(),
@@ -229,10 +229,10 @@ export function parseOpenSearchResponse(
  */
 export function buildOpenSearchURL(params: OpenSearchRequest): string {
   // NDL APIのstartパラメータは1-basedなので変換
-  const apiStart = params.start !== undefined 
+  const apiStart = params.start !== undefined
     ? (params.start + 1).toString()
     : undefined;
-    
+
   const url = buildURL(OPENSEARCH_API_BASE, {
     q: params.q,
     count: params.count?.toString(),
@@ -317,7 +317,7 @@ export function extractPaginationInfo(response: OpenSearchResponse): {
 /**
  * Simplified search result structure
  */
-export interface SearchItem {
+export interface OpenSearchItem {
   /** 書誌タイトル */
   title: string;
   /** 書誌詳細ページURL */
@@ -456,7 +456,7 @@ interface BaseOpenSearchResponse {
   /**
    * Search result items
    */
-  items: SearchItem[];
+  items: OpenSearchItem[];
 
   /**
    * Pagination information
@@ -482,7 +482,7 @@ interface BaseOpenSearchResponse {
 /**
  * High-level OpenSearch search response with optional rawXML field
  */
-export interface SearchResponse extends BaseOpenSearchResponse {
+export interface OpenSearchSearchResponse extends BaseOpenSearchResponse {
   /**
    * Raw XML response from NDL API (only included when includeRawXML option is true)
    */
@@ -521,7 +521,7 @@ export interface SearchResponse extends BaseOpenSearchResponse {
 export async function searchOpenSearch(
   query: string,
   options?: OpenSearchOptions,
-): Promise<Result<SearchResponse, NDLError>> {
+): Promise<Result<OpenSearchSearchResponse, NDLError>> {
   // Build OpenSearch request parameters
   const params: OpenSearchRequest = {
     q: query,
@@ -544,7 +544,7 @@ export async function searchOpenSearch(
   const paginationInfo = extractPaginationInfo(response);
 
   // より詳細な情報を抽出
-  const items: SearchItem[] = [];
+  const items: OpenSearchItem[] = [];
 
   if ("rss" in response) {
     const rssItems = response.rss.channel.item || [];
@@ -552,7 +552,7 @@ export async function searchOpenSearch(
       const basicItem = basicResults[index];
       if (!basicItem) return;
 
-      const searchItem: SearchItem = {
+      const searchItem: OpenSearchItem = {
         title: basicItem.title,
         link: basicItem.link,
         description: basicItem.description,

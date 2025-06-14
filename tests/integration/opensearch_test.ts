@@ -9,8 +9,8 @@ import { OPENSEARCH } from "./fixtures/mod.ts";
  * Run with: deno task test:integration
  */
 
-Deno.test("parseOpenSearchResponse parses basic search RSS correctly", async () => {
-  const result = await parseOpenSearchResponse(OPENSEARCH.BASIC_SEARCH);
+Deno.test("parseOpenSearchResponse parses basic search RSS correctly", () => {
+  const result = parseOpenSearchResponse(OPENSEARCH.BASIC_SEARCH);
 
   if (result.isErr()) {
     console.error("Parse failed:", result.error);
@@ -50,8 +50,8 @@ Deno.test("parseOpenSearchResponse parses basic search RSS correctly", async () 
   }
 });
 
-Deno.test("parseOpenSearchResponse parses pagination RSS correctly", async () => {
-  const result = await parseOpenSearchResponse(OPENSEARCH.PAGINATION);
+Deno.test("parseOpenSearchResponse parses pagination RSS correctly", () => {
+  const result = parseOpenSearchResponse(OPENSEARCH.PAGINATION);
 
   if (result.isErr()) {
     console.error("Parse failed:", result.error);
@@ -91,8 +91,8 @@ Deno.test("parseOpenSearchResponse parses pagination RSS correctly", async () =>
   }
 });
 
-Deno.test("parseOpenSearchResponse parses extract results RSS correctly", async () => {
-  const result = await parseOpenSearchResponse(OPENSEARCH.EXTRACT_RESULTS);
+Deno.test("parseOpenSearchResponse parses extract results RSS correctly", () => {
+  const result = parseOpenSearchResponse(OPENSEARCH.EXTRACT_RESULTS);
 
   if (result.isErr()) {
     console.error("Parse failed:", result.error);
@@ -114,7 +114,7 @@ Deno.test("parseOpenSearchResponse parses extract results RSS correctly", async 
   }
 });
 
-Deno.test("parseOpenSearchResponse validates all fixture responses", async () => {
+Deno.test("parseOpenSearchResponse validates all fixture responses", () => {
   // すべてのfixture XMLが正しくパースできることを確認
   const fixtures = [
     { name: "BASIC_SEARCH", data: OPENSEARCH.BASIC_SEARCH },
@@ -125,7 +125,7 @@ Deno.test("parseOpenSearchResponse validates all fixture responses", async () =>
   ];
 
   for (const fixture of fixtures) {
-    const result = await parseOpenSearchResponse(fixture.data);
+    const result = parseOpenSearchResponse(fixture.data);
 
     if (result.isErr()) {
       console.error(`Parse failed for ${fixture.name}:`, result.error);
@@ -156,7 +156,7 @@ Deno.test("parseOpenSearchResponse validates all fixture responses", async () =>
 
 Deno.test("searchOpenSearch high-level API returns structured data", async () => {
   // fixtureデータをパースして高レベルAPIの動作をテスト
-  const parsedResponse = await parseOpenSearchResponse(OPENSEARCH.BASIC_SEARCH);
+  const parsedResponse = parseOpenSearchResponse(OPENSEARCH.BASIC_SEARCH);
 
   if (parsedResponse.isErr()) {
     throw new Error(`Failed to parse fixture: ${parsedResponse.error.message}`);
