@@ -80,47 +80,6 @@ export function arrayOf<T>(
 }
 
 /**
- * Create union schema from multiple schemas
- *
- * @param schemas - Array of schemas to union
- * @returns Union schema
- */
-export function unionOf<
-  T extends readonly [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]],
->(
-  schemas: T,
-): z.ZodUnion<T> {
-  if (schemas.length < 2) {
-    throw new Error("Union requires at least 2 schemas");
-  }
-  return z.union(schemas);
-}
-
-/**
- * Create object schema with partial fields
- *
- * @param shape - Object shape definition
- * @param partialKeys - Keys to make optional
- * @returns Object schema with partial fields
- */
-export function objectWithPartial(
-  shape: Record<string, z.ZodTypeAny>,
-  partialKeys: string[],
-): z.ZodObject<Record<string, z.ZodTypeAny>> {
-  const newShape: Record<string, z.ZodTypeAny> = {};
-
-  for (const [key, field] of Object.entries(shape)) {
-    if (partialKeys.includes(key)) {
-      newShape[key] = field.optional();
-    } else {
-      newShape[key] = field;
-    }
-  }
-
-  return z.object(newShape);
-}
-
-/**
  * Validate and transform XML attribute to schema
  *
  * @param schema - Target schema
@@ -161,29 +120,6 @@ export function parseXMLAttribute<T>(
 
   // Fall back to string parsing
   return safeParse(schema, value);
-}
-
-/**
- * Compose multiple validation functions
- *
- * @param validators - Array of validation functions
- * @returns Composed validation function
- */
-export function composeValidators<T>(
-  ...validators: Array<(data: T) => Result<T, NDLError>>
-): (data: T) => Result<T, NDLError> {
-  return (data: T) => {
-    let result: Result<T, NDLError> = ok(data);
-
-    for (const validator of validators) {
-      result = result.andThen(validator);
-      if (result.isErr()) {
-        break;
-      }
-    }
-
-    return result;
-  };
 }
 
 /**
