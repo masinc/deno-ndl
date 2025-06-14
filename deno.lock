@@ -4,6 +4,7 @@
     "jsr:@std/assert@1": "1.0.13",
     "jsr:@std/internal@^1.0.6": "1.0.8",
     "npm:fast-xml-parser@^5.2.5": "5.2.5",
+    "npm:neverthrow@^8.2.0": "8.2.0",
     "npm:zod@^3.25.64": "3.25.64"
   },
   "jsr": {
@@ -18,12 +19,23 @@
     }
   },
   "npm": {
+    "@rollup/rollup-linux-x64-gnu@4.43.0": {
+      "integrity": "sha512-jAHr/S0iiBtFyzjhOkAics/2SrXE092qyqEg96e90L3t9Op8OTzS6+IX0Fy5wCt2+KqeHAkti+eitV0wvblEoQ==",
+      "os": ["linux"],
+      "cpu": ["x64"]
+    },
     "fast-xml-parser@5.2.5": {
       "integrity": "sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==",
       "dependencies": [
         "strnum"
       ],
       "bin": true
+    },
+    "neverthrow@8.2.0": {
+      "integrity": "sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==",
+      "optionalDependencies": [
+        "@rollup/rollup-linux-x64-gnu"
+      ]
     },
     "strnum@2.1.1": {
       "integrity": "sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw=="
@@ -36,6 +48,7 @@
     "dependencies": [
       "jsr:@std/assert@1",
       "npm:fast-xml-parser@^5.2.5",
+      "npm:neverthrow@^8.2.0",
       "npm:zod@^3.25.64"
     ]
   }
