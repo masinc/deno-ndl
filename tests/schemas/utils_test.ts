@@ -3,7 +3,6 @@ import { z } from "zod/v4";
 import {
   arrayOf,
   atLeastOne,
-  enumFrom,
   formatValidationError,
   optional,
   parseXMLAttribute,
@@ -74,19 +73,6 @@ Deno.test("arrayOf creates constrained array schema", () => {
   }
 });
 
-Deno.test("enumFrom creates enum schema", () => {
-  const schema = enumFrom(["red", "green", "blue"] as const);
-
-  assertEquals(schema.parse("red"), "red");
-  assertEquals(schema.parse("green"), "green");
-
-  try {
-    schema.parse("yellow");
-    throw new Error("Should have thrown");
-  } catch (error) {
-    assertEquals(error instanceof z.ZodError, true);
-  }
-});
 
 Deno.test("parseXMLAttribute handles string attributes", () => {
   const schema = z.string();

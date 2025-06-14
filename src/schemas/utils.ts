@@ -80,18 +80,6 @@ export function arrayOf<T>(
 }
 
 /**
- * Create enum schema from array of strings
- *
- * @param values - Array of enum values
- * @returns Enum schema
- */
-export function enumFrom<T extends readonly [string, ...string[]]>(
-  values: T,
-): z.ZodEnum<T> {
-  return z.enum(values);
-}
-
-/**
  * Create union schema from multiple schemas
  *
  * @param schemas - Array of schemas to union
@@ -115,19 +103,17 @@ export function unionOf<
  * @param partialKeys - Keys to make optional
  * @returns Object schema with partial fields
  */
-export function objectWithPartial<
-  T extends z.ZodRawShape,
-  K extends keyof T,
->(
-  shape: T,
-  partialKeys: K[],
-): z.ZodObject<z.ZodRawShape> {
-  const newShape: z.ZodRawShape = { ...shape };
+export function objectWithPartial(
+  shape: Record<string, z.ZodTypeAny>,
+  partialKeys: string[],
+): z.ZodObject<Record<string, z.ZodTypeAny>> {
+  const newShape: Record<string, z.ZodTypeAny> = {};
 
-  for (const key of partialKeys) {
-    const field = shape[key] as z.ZodTypeAny;
-    if (field && typeof field.optional === "function") {
+  for (const [key, field] of Object.entries(shape)) {
+    if (partialKeys.includes(key)) {
       newShape[key] = field.optional();
+    } else {
+      newShape[key] = field;
     }
   }
 
@@ -149,33 +135,31 @@ export function parseXMLAttribute<T>(
     return safeParse(schema, undefined);
   }
 
-  // Try to parse as different types based on schema type
-  const schemaType = (schema as z.ZodTypeAny)._def?.typeName;
-
-  if (schemaType === "ZodNumber") {
-    const num = Number(value);
-    return safeParse(
-      schema,
-      isNaN(num) ? value as unknown : num as unknown,
-    ) as Result<T, NDLError<z.ZodError>>;
-  }
-
-  if (schemaType === "ZodBoolean") {
-    const bool = value.toLowerCase();
-    if (bool === "true" || bool === "1") {
-      return safeParse(schema, true as unknown) as Result<
-        T,
-        NDLError<z.ZodError>
-      >;
-    }
-    if (bool === "false" || bool === "0") {
-      return safeParse(schema, false as unknown) as Result<
-        T,
-        NDLError<z.ZodError>
-      >;
+  // Try parsing as number first
+  const num = Number(value);
+  if (!isNaN(num)) {
+    const numResult = safeParse(schema, num as unknown);
+    if (numResult.isOk()) {
+      return numResult as Result<T, NDLError<z.ZodError>>;
     }
   }
 
+  // Try parsing as boolean
+  const lowerValue = value.toLowerCase();
+  if (lowerValue === "true" || lowerValue === "1") {
+    const boolResult = safeParse(schema, true as unknown);
+    if (boolResult.isOk()) {
+      return boolResult as Result<T, NDLError<z.ZodError>>;
+    }
+  }
+  if (lowerValue === "false" || lowerValue === "0") {
+    const boolResult = safeParse(schema, false as unknown);
+    if (boolResult.isOk()) {
+      return boolResult as Result<T, NDLError<z.ZodError>>;
+    }
+  }
+
+  // Fall back to string parsing
   return safeParse(schema, value);
 }
 
