@@ -14,8 +14,6 @@ export {
 
 // Response schemas
 export {
-  type ImageFormat,
-  ImageFormatSchema,
   type ThumbnailExistsResponse,
   ThumbnailExistsResponseSchema,
   type ThumbnailMetadata,

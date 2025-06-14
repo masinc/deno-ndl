@@ -7,20 +7,16 @@
 import { z } from "zod";
 
 /**
- * 画像形式
- */
-export const ImageFormatSchema = z.enum([
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-]);
-export type ImageFormat = z.infer<typeof ImageFormatSchema>;
-
-/**
  * サムネイル画像メタデータ
  */
-export const ThumbnailMetadataSchema = z.object({
+export const ThumbnailMetadataSchema: z.ZodType<{
+  size: string;
+  format: "image/jpeg" | "image/png" | "image/gif" | "image/webp";
+  fileSize: number;
+  width: number;
+  height: number;
+  lastModified?: string;
+}> = z.object({
   /**
    * 画像サイズ
    */
@@ -29,7 +25,7 @@ export const ThumbnailMetadataSchema = z.object({
   /**
    * 画像形式
    */
-  format: ImageFormatSchema,
+  format: z.enum(["image/jpeg", "image/png", "image/gif", "image/webp"]),
 
   /**
    * ファイルサイズ（バイト）
@@ -57,7 +53,12 @@ export type ThumbnailMetadata = z.infer<typeof ThumbnailMetadataSchema>;
 /**
  * サムネイル取得成功レスポンス
  */
-export const ThumbnailResponseSchema = z.object({
+export const ThumbnailResponseSchema: z.ZodType<{
+  id: string;
+  imageData: Uint8Array;
+  metadata: ThumbnailMetadata;
+  imageUrl: string;
+}> = z.object({
   /**
    * 識別子
    */
@@ -84,7 +85,11 @@ export type ThumbnailResponse = z.infer<typeof ThumbnailResponseSchema>;
 /**
  * サムネイル存在確認レスポンス
  */
-export const ThumbnailExistsResponseSchema = z.object({
+export const ThumbnailExistsResponseSchema: z.ZodType<{
+  id: string;
+  exists: boolean;
+  checkedAt: string;
+}> = z.object({
   /**
    * 識別子
    */

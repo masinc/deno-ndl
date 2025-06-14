@@ -91,7 +91,7 @@ const result = await fetchThumbnail({ id: "9784422311074" });
 if (result.isOk()) {
   const thumbnail = result.value;
   console.log(`取得: ${thumbnail.id}, サイズ: ${thumbnail.metadata.size}`);
-  
+
   // ファイルに保存
   await saveThumbnailToFile(thumbnail, "thumbnail.jpg");
 } else {
