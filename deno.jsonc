@@ -1,12 +1,17 @@
 {
   "name": "@masinc/ndl",
   "version": "0.0.1",
-  "exports": "./mod.ts",
+  "exports": {
+    ".": "./mod.ts",
+    "./cli": "./cli.ts"
+  },
   "tasks": {
     "dev": "deno test --watch"
   },
   "license": "MIT",
   "imports": {
-    "@std/assert": "jsr:@std/assert@1"
+    "@std/assert": "jsr:@std/assert@1",
+    "fast-xml-parser": "npm:fast-xml-parser@^5.2.5",
+    "zod": "npm:zod@^3.25.64"
   }
 }
