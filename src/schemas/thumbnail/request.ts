@@ -9,7 +9,9 @@ import { z } from "zod";
 /**
  * サムネイル取得リクエストパラメータ
  */
-export const ThumbnailRequestSchema = z.object({
+export const ThumbnailRequestSchema: z.ZodType<{
+  id: string;
+}> = z.object({
   /**
    * 識別子（ISBN等）
    */
@@ -21,6 +23,8 @@ export type ThumbnailRequest = z.infer<typeof ThumbnailRequestSchema>;
 /**
  * サムネイル存在確認リクエストパラメータ
  */
-export const ThumbnailExistsRequestSchema = ThumbnailRequestSchema;
+export const ThumbnailExistsRequestSchema: z.ZodType<{
+  id: string;
+}> = ThumbnailRequestSchema;
 
 export type ThumbnailExistsRequest = ThumbnailRequest;

@@ -38,7 +38,7 @@ deno add jsr:@masinc/ndl
 ```json
 {
   "imports": {
-    "@masinc/ndl": "jsr:@masinc/ndl@^0.1.202506150741"
+    "@masinc/ndl": "jsr:@masinc/ndl@^0.1.202506150757"
   }
 }
 ```
@@ -91,7 +91,7 @@ const result = await fetchThumbnail({ id: "9784422311074" });
 if (result.isOk()) {
   const thumbnail = result.value;
   console.log(`取得: ${thumbnail.id}, サイズ: ${thumbnail.metadata.size}`);
-  
+
   // ファイルに保存
   await saveThumbnailToFile(thumbnail, "thumbnail.jpg");
 } else {

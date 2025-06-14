@@ -12,6 +12,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **MINOR番号**: 新機能追加時に手動でインクリメント
 - **MAJOR番号**: 現在のプロジェクトフェーズでは使用しない
 
+## [0.1.202506150757] - 2025-06-15
+
+### Fixed
+
+- JSR公開エラーを修正 - Thumbnailスキーマの明示的型アノテーション追加
+- ThumbnailRequestSchema, ThumbnailMetadataSchema, ThumbnailResponseSchema,
+  ThumbnailExistsResponseSchemaに明示的型アノテーション追加
+- 不要なImageFormatSchemaを削除し直接文字列リテラル型に変更
+
 ## [0.1.202506150741] - 2025-06-15
 
 ### Added
