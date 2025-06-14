@@ -44,7 +44,7 @@ Deno.test("CQLQueryBuilder - date range", () => {
     .dateRange({ from: "2020", to: "2023" })
     .build();
 
-  assertEquals(query, '(date >= "2020" AND date <= "2023")');
+  assertEquals(query, '(from="2020" AND until="2023")');
 });
 
 Deno.test("CQLQueryBuilder - complex query with AND/OR", () => {

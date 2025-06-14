@@ -15,6 +15,9 @@ import {
   apiError,
   type NDLError,
   networkError,
+  querySyntaxError,
+  rateLimitError,
+  sruDiagnosticError,
   validationError,
 } from "../errors.ts";
 import {
@@ -187,6 +190,70 @@ export function parseSRUResponse(
 }
 
 /**
+ * Analyze SRU diagnostics and create appropriate error
+ *
+ * @param diagnostics - SRU diagnostic array
+ * @returns Appropriate NDL error or null if no error
+ */
+function analyzeSRUDiagnostics(
+  diagnostics?: Array<{
+    uri?: string;
+    code?: string;
+    message: string;
+    details?: string;
+  }>,
+): NDLError | null {
+  if (!diagnostics || diagnostics.length === 0) {
+    return null;
+  }
+
+  // Check for common SRU diagnostic codes
+  for (const diagnostic of diagnostics) {
+    const uri = diagnostic.uri || "";
+    const message = diagnostic.message;
+
+    // Query syntax errors
+    if (uri.includes("query/syntax") || message.toLowerCase().includes("syntax")) {
+      return querySyntaxError(
+        `CQLクエリの構文エラー: ${message}`,
+        diagnostic,
+      );
+    }
+
+    // Unsupported query errors
+    if (uri.includes("query/feature") || message.toLowerCase().includes("unsupported")) {
+      return querySyntaxError(
+        `サポートされていない検索機能: ${message}`,
+        diagnostic,
+      );
+    }
+
+    // Result set errors
+    if (uri.includes("resultset") || message.toLowerCase().includes("result")) {
+      return sruDiagnosticError(
+        `検索結果の処理エラー: ${message}`,
+        diagnostic,
+      );
+    }
+
+    // General diagnostic error
+    if (diagnostic.code && parseInt(diagnostic.code) >= 10) {
+      return sruDiagnosticError(
+        `検索エラー (コード: ${diagnostic.code}): ${message}`,
+        diagnostic,
+      );
+    }
+  }
+
+  // Default diagnostic error
+  const firstDiagnostic = diagnostics[0];
+  return sruDiagnosticError(
+    `検索処理でエラーが発生しました: ${firstDiagnostic.message}`,
+    firstDiagnostic,
+  );
+}
+
+/**
  * Execute SRU search retrieve request (internal function)
  *
  * @param params - SRU search retrieve parameters
@@ -211,14 +278,28 @@ async function executeSearchRetrieve(
     );
   }
 
-  const items = extractSRUSearchItems(response);
-  const pagination = extractSRUPaginationInfo(response, params);
-
-  // Extract diagnostics
+  // Extract diagnostics and check for errors
   const diagnostics = response.response.diagnostics?.diagnostic;
   const diagnosticArray = diagnostics
     ? (Array.isArray(diagnostics) ? diagnostics : [diagnostics])
     : undefined;
+
+  // Convert SRU diagnostics to structured format
+  const structuredDiagnostics = diagnosticArray?.map((d) => ({
+    uri: d.uri,
+    code: d.code,
+    message: d.message,
+    details: d.details,
+  }));
+
+  // Check if diagnostics indicate an error
+  const diagnosticError = analyzeSRUDiagnostics(structuredDiagnostics);
+  if (diagnosticError) {
+    return err(diagnosticError);
+  }
+
+  const items = extractSRUSearchItems(response);
+  const pagination = extractSRUPaginationInfo(response, params);
 
   return ok({
     items,
@@ -227,11 +308,7 @@ async function executeSearchRetrieve(
       cql: params.query,
       schema: params.recordSchema,
     },
-    diagnostics: diagnosticArray?.map((d) => ({
-      code: d.code,
-      message: d.message,
-      details: d.details,
-    })),
+    diagnostics: structuredDiagnostics,
   });
 }
 
@@ -260,10 +337,43 @@ export async function executeSearchRetrieveRaw(
     const response = await fetch(url);
 
     if (!response.ok) {
-      return err(apiError(
-        `SRU API request failed: ${response.status} ${response.statusText}`,
-        response.status,
-      ));
+      // Check for rate limiting
+      if (response.status === 429) {
+        const retryAfter = response.headers.get("Retry-After");
+        const message = retryAfter
+          ? `リクエスト回数の制限に達しました。${retryAfter}秒後に再試行してください。`
+          : "リクエスト回数の制限に達しました。しばらくお待ちください。";
+        return err(rateLimitError(message, response.status));
+      }
+
+      // Enhanced error messages based on status code
+      let userMessage = "";
+      switch (response.status) {
+        case 400:
+          userMessage = "リクエストに問題があります。検索条件を確認してください。";
+          break;
+        case 401:
+          userMessage = "認証が必要です。";
+          break;
+        case 403:
+          userMessage = "アクセスが拒否されました。";
+          break;
+        case 404:
+          userMessage = "SRU APIエンドポイントが見つかりません。";
+          break;
+        case 500:
+          userMessage = "サーバーエラーが発生しました。しばらく時間をおいて再試行してください。";
+          break;
+        case 502:
+        case 503:
+        case 504:
+          userMessage = "サービスが一時的に利用できません。しばらく時間をおいて再試行してください。";
+          break;
+        default:
+          userMessage = `SRU APIリクエストが失敗しました（ステータス: ${response.status}）`;
+      }
+
+      return err(apiError(userMessage, response.status));
     }
 
     const xmlData = await response.text();
@@ -271,12 +381,13 @@ export async function executeSearchRetrieveRaw(
   } catch (error) {
     if (error instanceof TypeError && error.message.includes("fetch")) {
       return err(networkError(
-        `Network error during SRU request: ${error.message}`,
+        "ネットワークエラーが発生しました。インターネット接続を確認してください。",
+        error,
       ));
     }
 
     return err(apiError(
-      `Unexpected error during SRU request: ${
+      `予期しないエラーが発生しました: ${
         error instanceof Error ? error.message : String(error)
       }`,
       0,
@@ -641,6 +752,10 @@ export function extractSRUPaginationInfo(
       totalPages: 0,
       itemsPerPage: requestParams.maximumRecords || 10,
       startIndex: requestParams.startRecord || 1,
+      hasPreviousPage: false,
+      hasNextPage: false,
+      nextPageParams: undefined,
+      previousPageParams: undefined,
     };
   }
 

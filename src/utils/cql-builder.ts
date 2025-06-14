@@ -24,7 +24,7 @@ import {
   SimpleSearchParamsSchema,
 } from "../schemas/sru/query-builder.ts";
 import { safeParse } from "../schemas/utils.ts";
-import { type NDLError, validationError } from "../errors.ts";
+import { type NDLError, querySyntaxError, validationError } from "../errors.ts";
 
 /**
  * CQL Query Builder class with Zod validation
@@ -141,11 +141,11 @@ export class CQLQueryBuilder {
     const conditions: string[] = [];
 
     if (range.from) {
-      conditions.push(`date >= "${range.from}"`);
+      conditions.push(`from="${range.from}"`);
     }
 
     if (range.to) {
-      conditions.push(`date <= "${range.to}"`);
+      conditions.push(`until="${range.to}"`);
     }
 
     if (conditions.length > 0) {
@@ -325,7 +325,7 @@ export function buildSimpleCQLQuery(
   const validationResult = safeParse(SimpleSearchParamsSchema, params);
   if (validationResult.isErr()) {
     return err(validationError(
-      `Invalid search parameters: ${validationResult.error.message}`,
+      "検索パラメータの形式が正しくありません。検索条件を確認してください。",
       validationResult.error
     ));
   }
@@ -415,7 +415,7 @@ export function buildAdvancedCQLQuery(
   const validationResult = safeParse(AdvancedSearchParamsSchema, params);
   if (validationResult.isErr()) {
     return err(validationError(
-      `Invalid advanced search parameters: ${validationResult.error.message}`,
+      "高度な検索パラメータの形式が正しくありません。検索条件を確認してください。",
       validationResult.error
     ));
   }
