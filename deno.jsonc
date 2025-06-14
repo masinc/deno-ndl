@@ -6,7 +6,8 @@
     "./cli": "./cli.ts"
   },
   "tasks": {
-    "dev": "deno test --watch"
+    "dev": "deno test --watch",
+    "check": "deno check **/*.ts && deno lint && deno fmt --check && deno test"
   },
   "license": "MIT",
   "imports": {
