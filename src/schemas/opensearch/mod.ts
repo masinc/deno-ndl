@@ -9,16 +9,8 @@
 
 // Request schemas
 export {
-  type OpenSearchCount,
-  OpenSearchCountSchema,
-  type OpenSearchFormat,
-  OpenSearchFormatSchema,
-  type OpenSearchQuery,
-  OpenSearchQuerySchema,
   type OpenSearchRequest,
   OpenSearchRequestSchema,
-  type OpenSearchStart,
-  OpenSearchStartSchema,
   type OpenSearchUrlTemplate,
   OpenSearchUrlTemplateSchema,
 } from "./request.ts";

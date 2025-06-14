@@ -14,7 +14,6 @@ export {
 // OpenSearch request types
 export type {
   OpenSearchRequest,
-  OpenSearchFormat,
 } from "./src/schemas/opensearch/mod.ts";
 
 // Error types
