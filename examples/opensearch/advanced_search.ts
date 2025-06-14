@@ -22,8 +22,7 @@ async function advancedSearch() {
     console.log(`\n${description}: "${q}"`);
     console.log("-".repeat(30));
 
-    const result = await searchOpenSearch({
-      q,
+    const result = await searchOpenSearch(q, {
       count: 3,
       start: 0,
     });

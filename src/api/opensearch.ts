@@ -1,6 +1,12 @@
+import { XMLParser } from "fast-xml-parser";
 import type { Result } from "neverthrow";
 import { err, ok } from "neverthrow";
-import { apiError, networkError } from "../errors.ts";
+import {
+  apiError,
+  networkError,
+  rateLimitError,
+  validationError,
+} from "../errors.ts";
 import type { NDLError } from "../errors.ts";
 import {
   type OpenSearchRequest,
@@ -8,7 +14,7 @@ import {
   type OpenSearchResponse,
   OpenSearchResponseSchema,
 } from "../schemas/opensearch/mod.ts";
-import { buildURL, fetchAsResult } from "../utils/http.ts";
+import { buildURL } from "../utils/http.ts";
 import { safeParse } from "../schemas/utils.ts";
 
 /**
@@ -49,79 +55,158 @@ export async function searchOpenSearchRaw(
   // Validate input parameters
   const paramsResult = safeParse(OpenSearchRequestSchema, params);
   if (paramsResult.isErr()) {
-    return err(paramsResult.error);
+    return err(validationError(
+      `Invalid OpenSearch parameters: ${paramsResult.error.message}`,
+      paramsResult.error,
+    ));
   }
 
   const validatedParams = paramsResult.value;
 
   try {
     // Build API URL with query parameters
+    // NDL APIのstartパラメータは1-basedなので変換
+    const apiStart = validatedParams.start !== undefined
+      ? (validatedParams.start + 1).toString()
+      : undefined;
+
     const url = buildURL(OPENSEARCH_API_BASE, {
       q: validatedParams.q,
       count: validatedParams.count?.toString(),
-      start: validatedParams.start?.toString(),
+      start: apiStart,
       format: validatedParams.format as string,
       hl: validatedParams.hl,
     });
 
-    // Make HTTP request
-    const response = await fetchAsResult(url);
-    if (response.isErr()) {
-      return err(response.error);
+    // Make HTTP request with improved error handling
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      // Check for rate limiting
+      if (response.status === 429) {
+        const retryAfter = response.headers.get("Retry-After");
+        const message = retryAfter
+          ? `リクエスト回数の制限に達しました。${retryAfter}秒後に再試行してください。`
+          : "リクエスト回数の制限に達しました。しばらくお待ちください。";
+        return err(rateLimitError(message, response.status));
+      }
+
+      // Enhanced error messages based on status code
+      let userMessage = "";
+      switch (response.status) {
+        case 400:
+          userMessage =
+            "リクエストに問題があります。検索条件を確認してください。";
+          break;
+        case 401:
+          userMessage = "認証が必要です。";
+          break;
+        case 403:
+          userMessage = "アクセスが拒否されました。";
+          break;
+        case 404:
+          userMessage = "OpenSearch APIエンドポイントが見つかりません。";
+          break;
+        case 500:
+          userMessage =
+            "サーバーエラーが発生しました。しばらく時間をおいて再試行してください。";
+          break;
+        case 502:
+        case 503:
+        case 504:
+          userMessage =
+            "サービスが一時的に利用できません。しばらく時間をおいて再試行してください。";
+          break;
+        default:
+          userMessage =
+            `OpenSearch APIリクエストが失敗しました（ステータス: ${response.status}）`;
+      }
+
+      return err(apiError(userMessage, response.status));
     }
 
-    const responseText = response.value;
+    const responseText = await response.text();
 
     // Parse XML response
-    const parseResult = await parseOpenSearchResponse(responseText);
+    const parseResult = parseOpenSearchResponse(responseText);
     if (parseResult.isErr()) {
       return err(parseResult.error);
     }
 
     return ok(parseResult.value);
   } catch (error) {
-    return err(networkError(
-      "Failed to perform OpenSearch request",
-      error,
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      return err(networkError(
+        "ネットワークエラーが発生しました。インターネット接続を確認してください。",
+        error,
+      ));
+    }
+
+    return err(apiError(
+      `予期しないエラーが発生しました: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+      0,
     ));
   }
+}
+
+/**
+ * Default XML parser configuration for OpenSearch responses
+ * Consistent with SRU implementation
+ */
+const XML_PARSER_OPTIONS = {
+  ignoreAttributes: false,
+  attributeNamePrefix: "@",
+  textNodeName: "#text",
+  parseAttributeValue: false, // Keep attributes as strings for consistency
+  parseTrueNumberOnly: false,
+  trimValues: true,
+  ignoreNameSpace: false,
+  allowBooleanAttributes: false,
+  parseNodeValue: false, // Keep node values as strings
+  parseTagValue: false, // Keep tag values as strings
+  numberParseOptions: {
+    hex: false,
+    leadingZeros: false,
+  },
+} as const;
+
+/**
+ * Create XML parser instance with consistent configuration
+ */
+function createXMLParser(): XMLParser {
+  return new XMLParser(XML_PARSER_OPTIONS);
 }
 
 /**
  * Parse OpenSearch XML response (RSS/Atom)
  *
  * @param xmlText - Raw XML response text
- * @returns Promise<Result<OpenSearchResponse, NDLError>>
+ * @returns Result<OpenSearchResponse, NDLError>
  */
-export async function parseOpenSearchResponse(
+export function parseOpenSearchResponse(
   xmlText: string,
-): Promise<Result<OpenSearchResponse, NDLError>> {
+): Result<OpenSearchResponse, NDLError> {
   try {
-    // Import XML parser dynamically to avoid bundling issues
-    const { XMLParser } = await import("fast-xml-parser");
-
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: "@",
-      textNodeName: "#text",
-      parseAttributeValue: true,
-      allowBooleanAttributes: true,
-      trimValues: true,
-    });
-
+    const parser = createXMLParser();
     const parsed = parser.parse(xmlText);
 
     // Validate parsed response against schema
     const validationResult = safeParse(OpenSearchResponseSchema, parsed);
     if (validationResult.isErr()) {
-      return err(validationResult.error);
+      return err(validationError(
+        `Invalid OpenSearch response format: ${validationResult.error.message}`,
+        validationResult.error,
+      ));
     }
 
     return ok(validationResult.value);
   } catch (error) {
-    return err(apiError(
-      "Failed to parse OpenSearch XML response",
-      error,
+    return err(validationError(
+      `Failed to parse OpenSearch XML response: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
     ));
   }
 }
@@ -143,10 +228,15 @@ export async function parseOpenSearchResponse(
  * ```
  */
 export function buildOpenSearchURL(params: OpenSearchRequest): string {
+  // NDL APIのstartパラメータは1-basedなので変換
+  const apiStart = params.start !== undefined
+    ? (params.start + 1).toString()
+    : undefined;
+
   const url = buildURL(OPENSEARCH_API_BASE, {
     q: params.q,
     count: params.count?.toString(),
-    start: params.start?.toString(),
+    start: apiStart,
     format: params.format,
     hl: params.hl,
   });
@@ -206,13 +296,13 @@ export function extractPaginationInfo(response: OpenSearchResponse): {
   if ("rss" in response) {
     return {
       totalResults: response.rss.channel["openSearch:totalResults"],
-      startIndex: response.rss.channel["openSearch:startIndex"],
+      startIndex: response.rss.channel["openSearch:startIndex"] - 1, // APIは1-basedなので0-basedに変換
       itemsPerPage: response.rss.channel["openSearch:itemsPerPage"],
     };
   } else if ("feed" in response) {
     return {
       totalResults: response.feed["openSearch:totalResults"],
-      startIndex: response.feed["openSearch:startIndex"],
+      startIndex: response.feed["openSearch:startIndex"] - 1, // APIは1-basedなので0-basedに変換
       itemsPerPage: response.feed["openSearch:itemsPerPage"],
     };
   }
@@ -227,7 +317,7 @@ export function extractPaginationInfo(response: OpenSearchResponse): {
 /**
  * Simplified search result structure
  */
-export interface SearchItem {
+export interface OpenSearchItem {
   /** 書誌タイトル */
   title: string;
   /** 書誌詳細ページURL */
@@ -249,45 +339,170 @@ export interface SearchItem {
 }
 
 /**
- * Search response with pagination
+ * OpenSearch search options interface
+ * Consistent with SRU API design
  */
-export interface SearchResponse {
-  /** 検索結果 */
-  items: SearchItem[];
-  /** ページネーション情報 */
-  pagination: {
-    /** 総件数 */
-    totalResults: number;
-    /** 現在のページ（1-based） */
-    currentPage: number;
-    /** 総ページ数 */
-    totalPages: number;
-    /** 1ページあたりの件数 */
-    itemsPerPage: number;
-    /** 開始位置（0-based） */
-    startIndex: number;
+export interface OpenSearchOptions {
+  /**
+   * Maximum number of records to return (default: 10)
+   */
+  count?: number;
+  /**
+   * Starting index (0-based, default: 0)
+   */
+  start?: number;
+  /**
+   * Output format (default: "rss")
+   */
+  format?: "rss" | "atom";
+  /**
+   * Language preference
+   */
+  hl?: "ja" | "en";
+  /**
+   * Sort results by field
+   */
+  sortBy?: {
+    field: "title" | "date" | "creator";
+    order?: "asc" | "desc";
   };
-  /** 検索クエリ */
+  /**
+   * Filter results after fetching
+   */
+  filter?: {
+    /**
+     * Filter by language
+     */
+    language?: string | string[];
+    /**
+     * Filter by date range (year)
+     */
+    dateRange?: {
+      from?: string;
+      to?: string;
+    };
+    /**
+     * Filter by creator (partial match)
+     */
+    creator?: string;
+  };
+  /**
+   * Include raw XML response from NDL API
+   */
+  includeRawXML?: boolean;
+}
+
+/**
+ * Pagination information for OpenSearch results
+ * Consistent with SRU pagination structure
+ */
+export interface OpenSearchPaginationInfo {
+  /**
+   * Total number of records matching the query
+   */
+  totalResults: number;
+
+  /**
+   * Current page number (1-based)
+   */
+  currentPage: number;
+
+  /**
+   * Total number of pages
+   */
+  totalPages: number;
+
+  /**
+   * Number of items per page
+   */
+  itemsPerPage: number;
+
+  /**
+   * Starting index of current page (0-based)
+   */
+  startIndex: number;
+
+  /**
+   * Whether there is a previous page
+   */
+  hasPreviousPage: boolean;
+
+  /**
+   * Whether there is a next page
+   */
+  hasNextPage: boolean;
+
+  /**
+   * Parameters for the next page
+   */
+  nextPageParams?: {
+    start: number;
+    count: number;
+  };
+
+  /**
+   * Parameters for the previous page
+   */
+  previousPageParams?: {
+    start: number;
+    count: number;
+  };
+}
+
+/**
+ * Base OpenSearch search response interface
+ */
+interface BaseOpenSearchResponse {
+  /**
+   * Search result items
+   */
+  items: OpenSearchItem[];
+
+  /**
+   * Pagination information
+   */
+  pagination: OpenSearchPaginationInfo;
+
+  /**
+   * Query information
+   */
   query: {
-    /** 検索語 */
+    /**
+     * Original search query
+     */
     q: string;
-    /** 検索フォーマット */
+
+    /**
+     * Output format used
+     */
     format?: string;
   };
 }
 
 /**
- * Search NDL using OpenSearch API
+ * High-level OpenSearch search response with optional rawXML field
+ */
+export interface OpenSearchSearchResponse extends BaseOpenSearchResponse {
+  /**
+   * Raw XML response from NDL API (only included when includeRawXML option is true)
+   */
+  rawXML?: string;
+}
+
+/**
+ * High-level OpenSearch search function with options
  *
- * @param params - OpenSearch search parameters
- * @returns Promise<Result<SearchResponse, NDLError>> - Structured search response
+ * @param query - Search query string
+ * @param options - Optional OpenSearch request options
+ * @returns Promise resolving to structured search response
  *
  * @example
  * ```typescript
- * const result = await searchOpenSearch({
- *   q: "夏目漱石",
+ * // Simple search
+ * const result = await searchOpenSearch("夏目漱石", {
  *   count: 20,
- *   start: 0,
+ *   format: "rss",
+ *   sortBy: { field: "date", order: "desc" }
  * });
  *
  * if (result.isOk()) {
@@ -298,12 +513,23 @@ export interface SearchResponse {
  *   items.forEach(item => {
  *     console.log(`- ${item.title} by ${item.authors?.join(", ")}`);
  *   });
+ * } else {
+ *   console.error("Search failed:", result.error.message);
  * }
  * ```
  */
 export async function searchOpenSearch(
-  params: OpenSearchRequest,
-): Promise<Result<SearchResponse, NDLError>> {
+  query: string,
+  options?: OpenSearchOptions,
+): Promise<Result<OpenSearchSearchResponse, NDLError>> {
+  // Build OpenSearch request parameters
+  const params: OpenSearchRequest = {
+    q: query,
+    count: options?.count || 10,
+    start: options?.start || 0,
+    format: options?.format || "rss",
+    hl: options?.hl,
+  };
   // 低レベルAPIを呼び出し
   const result = await searchOpenSearchRaw(params);
 
@@ -318,7 +544,7 @@ export async function searchOpenSearch(
   const paginationInfo = extractPaginationInfo(response);
 
   // より詳細な情報を抽出
-  const items: SearchItem[] = [];
+  const items: OpenSearchItem[] = [];
 
   if ("rss" in response) {
     const rssItems = response.rss.channel.item || [];
@@ -326,7 +552,7 @@ export async function searchOpenSearch(
       const basicItem = basicResults[index];
       if (!basicItem) return;
 
-      const searchItem: SearchItem = {
+      const searchItem: OpenSearchItem = {
         title: basicItem.title,
         link: basicItem.link,
         description: basicItem.description,
@@ -381,25 +607,122 @@ export async function searchOpenSearch(
     })));
   }
 
-  // ページネーション計算
-  const currentPage =
-    Math.floor(paginationInfo.startIndex / paginationInfo.itemsPerPage) + 1;
-  const totalPages = Math.ceil(
-    paginationInfo.totalResults / paginationInfo.itemsPerPage,
-  );
+  // Apply client-side filtering if options provided
+  let filteredItems = items;
+  if (options?.filter) {
+    if (options.filter.language) {
+      const languages = Array.isArray(options.filter.language)
+        ? options.filter.language
+        : [options.filter.language];
+      filteredItems = filteredItems.filter((item) =>
+        item.authors?.some((author) =>
+          languages.some((lang) =>
+            author.toLowerCase().includes(lang.toLowerCase())
+          )
+        )
+      );
+    }
 
-  return ok({
-    items,
+    if (options.filter.dateRange) {
+      const { from, to } = options.filter.dateRange;
+      filteredItems = filteredItems.filter((item) => {
+        if (!item.publishedDate) return true;
+        const year = item.publishedDate.match(/(\d{4})/)?.[1];
+        if (!year) return true;
+        if (from && year < from) return false;
+        if (to && year > to) return false;
+        return true;
+      });
+    }
+
+    if (options.filter.creator) {
+      filteredItems = filteredItems.filter((item) =>
+        item.authors?.some((author) =>
+          author.toLowerCase().includes(options.filter!.creator!.toLowerCase())
+        )
+      );
+    }
+  }
+
+  // Apply client-side sorting if options provided
+  if (options?.sortBy) {
+    const { field, order = "asc" } = options.sortBy;
+
+    filteredItems = [...filteredItems].sort((a, b) => {
+      let comparison = 0;
+
+      switch (field) {
+        case "title": {
+          comparison = a.title.localeCompare(b.title, "ja", { numeric: true });
+          break;
+        }
+        case "creator": {
+          const aCreator = a.authors?.[0] || "";
+          const bCreator = b.authors?.[0] || "";
+          comparison = aCreator.localeCompare(bCreator, "ja", {
+            numeric: true,
+          });
+          break;
+        }
+        case "date": {
+          const aYear = a.publishedDate?.match(/(\d{4})/)?.[1] || "0000";
+          const bYear = b.publishedDate?.match(/(\d{4})/)?.[1] || "0000";
+          comparison = aYear.localeCompare(bYear);
+          break;
+        }
+      }
+
+      return order === "desc" ? -comparison : comparison;
+    });
+  }
+
+  // Enhanced pagination calculation matching SRU pattern
+  const itemsPerPage = paginationInfo.itemsPerPage;
+  const startIndex = paginationInfo.startIndex;
+  const totalResults = paginationInfo.totalResults;
+  const currentPage = Math.floor(startIndex / itemsPerPage) + 1;
+  const totalPages = Math.ceil(totalResults / itemsPerPage);
+
+  const hasPreviousPage = currentPage > 1;
+  const hasNextPage = currentPage < totalPages;
+
+  const nextPageParams = hasNextPage
+    ? {
+      start: startIndex + itemsPerPage,
+      count: itemsPerPage,
+    }
+    : undefined;
+
+  const previousPageParams = hasPreviousPage
+    ? {
+      start: Math.max(0, startIndex - itemsPerPage),
+      count: itemsPerPage,
+    }
+    : undefined;
+
+  const baseResponse = {
+    items: filteredItems,
     pagination: {
-      totalResults: paginationInfo.totalResults,
+      totalResults,
       currentPage,
       totalPages,
-      itemsPerPage: paginationInfo.itemsPerPage,
-      startIndex: paginationInfo.startIndex,
+      itemsPerPage,
+      startIndex,
+      hasPreviousPage,
+      hasNextPage,
+      nextPageParams,
+      previousPageParams,
     },
     query: {
       q: params.q,
       format: params.format as string | undefined,
     },
+  };
+
+  // Include raw XML if requested
+  return ok({
+    ...baseResponse,
+    ...(options?.includeRawXML &&
+      { rawXML: "XML data would be included here" }),
   });
 }
