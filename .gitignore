@@ -6,3 +6,7 @@
 *.orig
 *.pyc
 *.swp
+
+# Coverage files
+coverage/
+coverage.lcov

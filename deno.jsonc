@@ -8,9 +8,15 @@
   "tasks": {
     "dev": "deno test --watch --ignore=\"tests/integration/\"",
     "test": "deno test --ignore=\"tests/integration/\"",
+    "test:coverage": "deno test --ignore=\"tests/integration/\" --coverage",
+    "test:integration": "deno test --allow-net --allow-read tests/integration/",
+    "test:integration:coverage": "deno test --allow-net --allow-read tests/integration/ --coverage",
+    "coverage": "deno coverage --html coverage/",
+    "coverage:lcov": "deno coverage --lcov --output=coverage.lcov",
+    "coverage:clean": "rm -rf coverage/ coverage.lcov",
     "lint": "deno lint --rules-exclude=no-slow-types",
     "check": "deno check **/*.ts && deno task lint && deno fmt --check && deno task test",
-    "test:integration": "deno test --allow-net --allow-read tests/integration/"
+    "check:coverage": "deno check **/*.ts && deno task lint && deno fmt --check && deno task test:coverage && deno task coverage"
   },
   "license": "MIT",
   "imports": {
