@@ -3,6 +3,8 @@
 国立国会図書館（NDL）APIの型安全なDenoライブラリです。
 
 [![JSR](https://jsr.io/badges/@masinc/ndl)](https://jsr.io/@masinc/ndl)
+[![JSR Score](https://jsr.io/badges/@masinc/ndl/score)](https://jsr.io/@masinc/ndl)
+[![codecov](https://codecov.io/gh/masinc/deno-ndl/branch/main/graph/badge.svg)](https://codecov.io/gh/masinc/deno-ndl)
 
 ## 特徴
 
@@ -117,6 +119,46 @@ if (result.isErr()) {
     console.error(`エラー: ${error.message}`);
   }
 }
+```
+
+## 開発とテスト
+
+### テスト実行
+
+```bash
+# 基本テスト実行
+deno task test
+
+# カバレッジ付きテスト実行
+deno task test:coverage
+
+# 統合テスト実行（ネットワーク接続必要）
+deno task test:integration
+```
+
+### カバレッジレポート
+
+```bash
+# HTMLレポート生成
+deno task coverage
+
+# LCOV形式レポート生成
+deno task coverage:lcov
+
+# カバレッジファイル削除
+deno task coverage:clean
+```
+
+カバレッジレポートは `coverage/html/index.html` で確認できます。
+
+### 全チェック実行
+
+```bash
+# 型チェック + リント + フォーマット + テスト
+deno task check
+
+# カバレッジ付き全チェック
+deno task check:coverage
 ```
 
 ## 詳細情報
