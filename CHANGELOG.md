@@ -12,6 +12,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **MINOR番号**: 新機能追加時に手動でインクリメント
 - **MAJOR番号**: 現在のプロジェクトフェーズでは使用しない
 
+## [0.1.202506150938] - 2025-06-15
+
+### Added
+
+- テストカバレッジシステム実装 - deno coverageによる品質可視化
+- 包括的カバレッジタスク追加 (`test:coverage`, `coverage`, `coverage:lcov`,
+  `coverage:clean`, `check:coverage`)
+- CI/CDワークフローにカバレッジ生成統合
+- Codecov外部レポート連携とバッジ表示
+- 詳細なカバレッジ使用ドキュメント（README.md「開発とテスト」セクション）
+
+### Technical
+
+- ベースラインカバレッジ確立 (56.1% line coverage, 60.6% branch coverage)
+- HTMLレポート自動生成 (`coverage/html/index.html`)
+- LCOV形式レポート対応
+- GitHub Actions Artifactによるレポート保存
+- JSR ScoreとCodecovバッジ追加
+
 ## [0.1.202506150757] - 2025-06-15
 
 ### Fixed
